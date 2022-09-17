@@ -1,24 +1,30 @@
-import {Container, Nav, Navbar, NavDropdown} from 'react-bootstrap'
+import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
 
 const NavigationBar = () => {
-
   return (
-    <Navbar bg="dark" expand="lg" variant="dark" style={{marginBottom: '2em'}}>
+    <Navbar
+      bg='dark'
+      expand='lg'
+      variant='dark'
+      style={{ marginBottom: '2em' }}
+    >
       <Container>
-        <LinkContainer to="/">
+        <LinkContainer to='/'>
           <Navbar.Brand>Summer Contest</Navbar.Brand>
         </LinkContainer>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <LinkContainer to="/">
+        <Navbar.Toggle aria-controls='basic-navbar-nav' />
+        <Navbar.Collapse id='basic-navbar-nav'>
+          <Nav className='me-auto'>
+            <LinkContainer to='/'>
               <Nav.Link>Home</Nav.Link>
             </LinkContainer>
-            <LinkContainer to="/login">
+            <LinkContainer to='/dashboard'>
+              <Nav.Link>Dashboard</Nav.Link>
+            </LinkContainer>
+            <LinkContainer to='/login'>
               <Nav.Link>Login</Nav.Link>
             </LinkContainer>
-
             {/* <NavDropdown title="Dropdown" id="basic-nav-dropdown">
 				  <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
 				  <NavDropdown.Item href="#action/3.2">

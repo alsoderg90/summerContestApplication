@@ -1,20 +1,19 @@
 import { useState } from 'react'
 import Leaflet from '../Leaflet/Leaflet'
-import LocationForm from '../LocationForm/LocationForm'
+import FormTab from '../FormTab/FormTab'
 import { Container, Col, Row } from 'react-bootstrap'
 
 const FrontPage = () => {
-
-  const [ location, setLocation ] = useState(undefined)
+  const [location, setLocation] = useState(undefined)
 
   return (
     <Container>
       <Row>
         <Col>
-          <Leaflet setLocation={setLocation}/>
+          <Leaflet location={location} setLocation={setLocation} />
         </Col>
         <Col>
-          <LocationForm location={location}/>
+          <FormTab location={location} />
         </Col>
       </Row>
     </Container>
