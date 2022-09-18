@@ -7,7 +7,7 @@ import { useState } from 'react'
 const createSchema = () => {
   return yup.object({
     name: yup.string().required(),
-    year: yup.date().required(),
+    year: yup.date().required().default(new Date()),
     members: yup.array()
   })
 }
@@ -31,10 +31,8 @@ const TeamForm = () => {
       <>
         Add Team
         <FormGroup className='mb-3' controlId='formBasicEmail'>
-          <label>
-            Name:
-            <Form.Field name='name' />
-          </label>
+          <label style={{ display: 'block' }}>Name:</label>
+          <Form.Field className='form-label' name='name' />
         </FormGroup>
         <FormGroup className='mb-3' controlId='formBasicPassword'>
           <label>

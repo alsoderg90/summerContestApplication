@@ -36,22 +36,19 @@ const LocationForm = ({ location }) => {
       onChange={setForm}
       onSubmit={handleSubmit}
       defaultValue={schema.default()}
+      className='location-form'
     >
       {!location ? (
         <Alert>Set location from map</Alert>
       ) : (
         <>
           <FormGroup className='mb-3' controlId='formBasicEmail'>
-            <label>
-              Address:
-              <Form.Field name='address' />
-            </label>
+            <label style={{ display: 'block' }}>Address:</label>
+            <Form.Field className='form-label' disabled={true} name='address' />
           </FormGroup>
           <FormGroup className='mb-3' controlId='formBasicPassword'>
-            <label>
-              Name:
-              <Form.Field name='name' />
-            </label>
+            <label style={{ display: 'block' }}>Name:</label>
+            <Form.Field className='form-label' name='name' />
           </FormGroup>
           {Object.keys(schema?.fields).map((field, index) => {
             return (
@@ -60,7 +57,7 @@ const LocationForm = ({ location }) => {
               </div>
             )
           })}
-          <Form.Submit>Submit</Form.Submit>
+          <Button type='submit'>Submit</Button>
         </>
       )}
     </Form>

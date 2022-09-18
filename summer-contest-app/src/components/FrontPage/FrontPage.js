@@ -5,15 +5,23 @@ import { Container, Col, Row } from 'react-bootstrap'
 
 const FrontPage = () => {
   const [location, setLocation] = useState(undefined)
-
+  const [activeTab, setActiveTab] = useState('location')
   return (
     <Container>
       <Row>
-        <Col>
-          <Leaflet location={location} setLocation={setLocation} />
+        <Col lg={true}>
+          <Leaflet
+            location={location}
+            setLocation={setLocation}
+            setActiveTab={setActiveTab}
+          />
         </Col>
         <Col>
-          <FormTab location={location} />
+          <FormTab
+            location={location}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+          />
         </Col>
       </Row>
     </Container>

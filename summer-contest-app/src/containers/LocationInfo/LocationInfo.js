@@ -1,38 +1,27 @@
-import { Alert, FormGroup, Container, Row, Col, Button } from 'react-bootstrap'
+import { FormGroup, Container, Row, Col, Button } from 'react-bootstrap'
 import PropTypes from 'prop-types'
-import { Combobox, NumberPicker } from 'react-widgets'
+import { DropdownList, NumberPicker } from 'react-widgets'
 import Form from 'react-formal'
 import * as yup from 'yup'
+import { BsFillTrashFill } from 'react-icons/bs'
 import { useEffect, useState } from 'react'
 
-let members1 = [
-  { id: 0, name: 'arto', team: 'joukkue1', points: 5 },
-  { id: 1, name: 'heikki', team: 'joukkue2', points: 2 },
-  { id: 2, name: 'tiina', team: 'joukkue2', points: 10 },
-  { id: 3, name: 'jukka', team: 'joukkue1', points: 0 }
-].sort((a, b) => b.points - a.points)
+let members = [
+  { name: 'John Doe', points: 5 },
+  { name: 'Jane Doe', points: 2 },
+  { name: 'Jack Doe', points: 5 },
+  { name: 'Jill Doe', points: 2 }
+]
 
-const createSchema = (members) => {
-  const validationObject = {}
-  members.forEach((member, index) => {
-    validationObject[`name-${index}`] = yup
-      .string()
-      .required()
-      .default(member?.name)
-    validationObject[`points-${index}`] = yup
-      .number()
-      .required()
-      .default(member?.points)
-    if (index === members.length - 1) {
-      validationObject[`name-${index + 1}`] = yup.string().required()
-      validationObject[`points-${index + 1}`] = yup
-        .number()
-        .required()
-        .default(0)
-    }
+const member = yup.object({
+  name: yup.string().required('Required'),
+  points: yup.string().required('Required').default(0)
+})
+
+const createSchema = () =>
+  yup.object({
+    members: yup.array().of(member).min(1, 'Must have at least one member')
   })
-  return yup.object(validationObject)
-}
 
 const LocationInfo = ({ location }) => {
   const road = location?.address?.road ? location.address.road : ''
@@ -41,98 +30,101 @@ const LocationInfo = ({ location }) => {
     : ''
   const address = `${road} ${houseNumber}`
 
-  const [members, setMembers] = useState(members1)
-  const schema = createSchema(members)
+  const schema = createSchema()
   const [form, setForm] = useState(schema.default())
 
   useEffect(() => {
     setForm({ ...form, address })
   }, [address, members])
 
-  const handleChange = (form) => {
-    setForm(form)
-    schema.isValidSync() !!
-      setMembers(
-        members.concat({ name: undefined, points: 0, team: undefined })
-      )
+  const handleSubmit = (formValue) => {
+    alert(JSON.stringify({ ...formValue, location }, null, 2))
   }
-
-  const handleSubmit = (formData) => {
-    alert(JSON.stringify(formData, null, 2))
-  }
-
+  console.log(members)
   return (
     <Form
-      value={form}
-      schema={schema}
-      onChange={handleChange}
       onSubmit={handleSubmit}
-      defaultValue={schema.default()}
+      schema={schema}
+      defaultValue={{
+        members: [
+          { name: 'John Doe', points: 5 },
+          { name: 'Jane Doe', points: 2 }
+        ]
+      }}
     >
-      {!location ? (
-        <Alert>Choose from map</Alert>
-      ) : (
-        <>
-          {address}
-          <FormGroup className='mb-3' controlId='formBasicPassword'>
-            <Container>
-              {members
-                ?.sort((a, b) => b.points - a.points)
+      {address}
+      <Container>
+        <Form.FieldArray name='members'>
+          {(values, arrayHelpers, meta) => (
+            <>
+              {values
+                //?.sort((a, b) => b.points + a.points)
                 .map((member, index) => {
                   return (
-                    <Row key={index}>
-                      <Col>
-                        <label>
-                          Name:
+                    <FormGroup
+                      key={index}
+                      className='mb-3'
+                      controlId='formBasicPassword'
+                    >
+                      <Row>
+                        <Col>
+                          <label>Name:</label>
                           <Form.Field
-                            as={Combobox}
+                            as={DropdownList}
                             data={members}
-                            dataKey='id'
                             textField='name'
-                            name={`name-${index}`}
-                            defaultValue={member?.name}
+                            name={`members[${index}].name`}
+                            dataKey='id'
+                            mapFromValue={(fieldValue) => `${fieldValue.name}`}
                           />
+                          <Form.Message
+                            for={`members[${index}].name`}
+                            className='error -mt-2'
+                          />
+                        </Col>
+                        <Col>
+                          <label>Points:</label>
                           <Form.Field
                             as={NumberPicker}
-                            defaultValue={member?.points}
-                            name={`points-${index}`}
+                            name={`members[${index}].points`}
                           />
-                        </label>
-                      </Col>
-                    </Row>
+                          <Form.Message
+                            for={`members[${index}].points`}
+                            className='error -mt-2'
+                          />
+                        </Col>
+                        <Col>
+                          <label style={{ display: 'block' }}>Delete:</label>
+                          <Button
+                            variant='danger'
+                            onClick={() => arrayHelpers.remove(member)}
+                          >
+                            <BsFillTrashFill />
+                          </Button>
+                        </Col>
+                      </Row>
+                    </FormGroup>
                   )
                 })}
-              <Row key={members.length}>
+              <Form.Message for={'members'} className='error' />
+              <Row>
                 <Col>
-                  <label>
-                    Name:
-                    <Form.Field
-                      as={Combobox}
-                      data={members}
-                      dataKey='id'
-                      textField='name'
-                      name={`name-${members.length}`}
-                    />
-                    <Form.Field
-                      as={NumberPicker}
-                      defaultValue={0}
-                      name={`points-${members.length}`}
-                    />
-                  </label>
+                  <Button
+                    variant='secondary'
+                    onClick={() => {
+                      const newMember = { id: 120, name: '', points: 0 }
+                      arrayHelpers.push(newMember)
+                    }}
+                  >
+                    Add Member
+                  </Button>{' '}
+                  <Button type='submit'>Submit</Button>
                 </Col>
               </Row>
-            </Container>
-          </FormGroup>
-          {Object.keys(schema?.fields).map((field, index) => {
-            return (
-              <div key={index}>
-                <Form.Message for={[field]} className='error' />
-              </div>
-            )
-          })}
-          <Form.Submit>Submit</Form.Submit>
-        </>
-      )}
+            </>
+          )}
+        </Form.FieldArray>
+      </Container>
     </Form>
   )
 }

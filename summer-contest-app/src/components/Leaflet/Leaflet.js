@@ -8,8 +8,22 @@ import {
 } from 'react-leaflet'
 import PropTypes from 'prop-types'
 import axios from 'axios'
+import L from 'leaflet'
+import marker from '../../assets/marker-icon-2x-green.png'
+import markerShadow from '../../assets/marker-shadow.png'
+import locations from '../../assets/locations.json'
 
-const LocationMarker = ({ setLocation, location }) => {
+const greenIcon = L.icon({
+  iconUrl: marker,
+  iconRetinaUrl: marker,
+  shadowUrl: markerShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+})
+
+const LocationMarker = ({ setLocation, location, setActiveTab }) => {
   useMapEvent('click', (e) => {
     const { lat, lng } = e.latlng
     axios
@@ -18,6 +32,7 @@ const LocationMarker = ({ setLocation, location }) => {
       )
       .then((res) => {
         setLocation(res.data)
+        setActiveTab('location')
       })
       .catch((err) => {
         console.log(err.message)
@@ -25,16 +40,14 @@ const LocationMarker = ({ setLocation, location }) => {
   })
 
   return location === undefined ? null : (
-    <Marker position={location}>
+    <Marker icon={greenIcon} position={location}>
       <Popup>You are here</Popup>
     </Marker>
   )
 }
 
-const Leaflet = ({ location, setLocation }) => {
+const Leaflet = ({ location, setLocation, setActiveTab }) => {
   useEffect(() => {
-    const L = require('leaflet')
-
     delete L.Icon.Default.prototype._getIconUrl
 
     L.Icon.Default.mergeOptions({
@@ -54,24 +67,44 @@ const Leaflet = ({ location, setLocation }) => {
         attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
       />
-      {/* <Marker position={[51.505, -0.09]}>
-        <Popup>
-          A pretty CSS3 popup. <br /> Easily customizable.
-        </Popup>
-      </Marker> */}
-      <LocationMarker location={location} setLocation={setLocation} />
+      {locations.map((location, index) => {
+        return (
+          <Marker
+            key={index}
+            position={location}
+            eventHandlers={{
+              click: (e) => {
+                setLocation(location)
+                setActiveTab('info')
+              }
+            }}
+          >
+            <Popup>
+              A pretty CSS3 popup. <br /> Easily customizable.
+            </Popup>
+          </Marker>
+        )
+      })}
+
+      <LocationMarker
+        location={location}
+        setLocation={setLocation}
+        setActiveTab={setActiveTab}
+      />
     </MapContainer>
   )
 }
 
 LocationMarker.propTypes = {
   setLocation: PropTypes.func.isRequired,
-  location: PropTypes.object
+  location: PropTypes.object,
+  setActiveTab: PropTypes.func
 }
 
 Leaflet.propTypes = {
   setLocation: PropTypes.func.isRequired,
-  location: PropTypes.object
+  location: PropTypes.object,
+  setActiveTab: PropTypes.func
 }
 
 export default Leaflet
