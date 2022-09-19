@@ -1,15 +1,16 @@
 import { FormGroup } from 'react-bootstrap'
-import { Combobox, Multiselect } from 'react-widgets'
+import { DropdownList } from 'react-widgets'
 import Form from 'react-formal'
 import * as yup from 'yup'
 import { useState } from 'react'
-import axios from 'axios'
 import { countryList } from './constants'
+import restCountriesService from '../../api/restcountries'
+import memberService from '../../api/members'
 
 const createSchema = () => {
   return yup.object({
-    name: yup.string(),
-    nationality: yup.string()
+    name: yup.string().required(),
+    nationality: yup.string().required()
   })
 }
 
@@ -17,20 +18,19 @@ const MemberForm = () => {
   const schema = createSchema()
   const [form, setForm] = useState()
 
-  const handleSubmit = (formData) => {
-    axios
-      .get(`https://restcountries.com/v3.1/name/${formData.nationality}`)
-      .then((res) => {
-        const { svg } = res.data[0].flags
-        const newForm = { ...formData, flagUrl: svg }
-        setForm(newForm)
-      })
-      .catch((e) => {
-        const newForm = { ...formData, flag: '' }
-        setForm(newForm)
-        console.warn(e)
-      })
-    axios.post('api/members', form)
+  const handleSubmit = async (formData) => {
+    try {
+      const res = await restCountriesService.get(formData)
+      const { svg } = res.data[0].flags
+      const newForm = { ...formData, flagUrl: svg }
+      setForm(newForm)
+      memberService.create(newForm)
+    } catch (e) {
+      const newForm = { ...formData, flag: '' }
+      setForm(newForm)
+      memberService.create(newForm)
+      console.warn(e)
+    }
   }
 
   return (
@@ -50,7 +50,7 @@ const MemberForm = () => {
         <FormGroup className='mb-3' controlId='formBasicEmail'>
           <label style={{ display: 'block' }}>Nationality:</label>
           <Form.Field
-            as={Combobox}
+            as={DropdownList}
             data={countryList}
             name='nationality'
             renderListItem={({ item }) =>

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Diagnostics.CodeAnalysis;
 
 namespace app.Models
 {
@@ -10,5 +9,11 @@ namespace app.Models
         }
 
         public DbSet<Member> Members { get; set; } = null!;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Member>()
+                .HasAlternateKey(m => m.Name);
+        }
     }
 }

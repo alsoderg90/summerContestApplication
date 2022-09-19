@@ -1,4 +1,5 @@
 import React from 'react'
+import { BrowserRouter } from 'react-router-dom'
 import { createRoot } from 'react-dom/client'
 import App from './App'
 import * as serviceWorkerRegistration from './serviceWorkerRegistration'
@@ -8,9 +9,9 @@ const rootElement = document.getElementById('root')
 const root = createRoot(rootElement)
 
 root.render(
-  <React.StrictMode>
+  <BrowserRouter>
     <App />
-  </React.StrictMode>
+  </BrowserRouter>
 )
 
 // If you want your app to work offline and load faster, you can change

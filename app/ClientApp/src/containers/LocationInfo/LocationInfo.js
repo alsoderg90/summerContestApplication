@@ -5,13 +5,7 @@ import Form from 'react-formal'
 import * as yup from 'yup'
 import { BsFillTrashFill } from 'react-icons/bs'
 import { useEffect, useState } from 'react'
-
-let members = [
-  { name: 'John Doe', points: 5 },
-  { name: 'Jane Doe', points: 2 },
-  { name: 'Jack Doe', points: 5 },
-  { name: 'Jill Doe', points: 2 }
-]
+import memberService from '../../api/members'
 
 const member = yup.object({
   name: yup.string().required('Required'),
@@ -32,6 +26,16 @@ const LocationInfo = ({ location }) => {
 
   const schema = createSchema()
   const [form, setForm] = useState(schema.default())
+  const [members, setMembers] = useState()
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await memberService.getAll()
+      const members = res.data
+      setMembers(members)
+    }
+    fetchData().catch(console.error)
+  }, [])
 
   useEffect(() => {
     setForm({ ...form, address })
@@ -40,7 +44,7 @@ const LocationInfo = ({ location }) => {
   const handleSubmit = (formValue) => {
     alert(JSON.stringify({ ...formValue, location }, null, 2))
   }
-  console.log(members)
+
   return (
     <Form
       onSubmit={handleSubmit}
@@ -59,7 +63,7 @@ const LocationInfo = ({ location }) => {
             <>
               {values
                 //?.sort((a, b) => b.points + a.points)
-                .map((member, index) => {
+                ?.map((member, index) => {
                   return (
                     <FormGroup
                       key={index}

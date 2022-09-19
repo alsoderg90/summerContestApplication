@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using app.Models;
+using app.Extensions;
 
 namespace app.Controllers
 {
@@ -75,12 +76,17 @@ namespace app.Controllers
         // POST: api/Members
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Member>> PostMember(Member member)
+        public async Task<ActionResult<Member>> Create([FromBody] Member member)
         {
-            _context.Members.Add(member);
-            await _context.SaveChangesAsync();
+            if (ModelState.IsValid)
+            {
+                _context.Members.Add(member);
+                await _context.SaveChangesAsync();
+                return CreatedAtAction("GetMember", new { id = member.Id }, member);
+            }
 
-            return CreatedAtAction("GetMember", new { id = member.Id }, member);
+            var errors = ModelState.GetErrors;
+            return BadRequest(new { errors });
         }
 
         // DELETE: api/Members/5
