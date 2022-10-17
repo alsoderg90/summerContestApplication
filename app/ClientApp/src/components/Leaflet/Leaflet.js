@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import {
   MapContainer,
   TileLayer,
@@ -11,7 +11,7 @@ import axios from 'axios'
 import L from 'leaflet'
 import marker from '../../assets/marker-icon-2x-green.png'
 import markerShadow from '../../assets/marker-shadow.png'
-import locations from '../../assets/locations.json'
+import checkpointsService from '../../api/checkpoints'
 
 const greenIcon = L.icon({
   iconUrl: marker,
@@ -57,6 +57,16 @@ const Leaflet = ({ location, setLocation, setActiveTab }) => {
     })
   }, [])
 
+  const [locations, setLocations] = useState()
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await checkpointsService.getAll()
+      setLocations(res.data)
+    }
+    fetchData().catch(console.error)
+  }, [])
+
   return (
     <MapContainer
       center={[62.24754, 25.712153]}
@@ -67,11 +77,12 @@ const Leaflet = ({ location, setLocation, setActiveTab }) => {
         attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
       />
-      {locations.map((location, index) => {
+      {locations?.map((location, index) => {
+        const position = [location.lat, location.lon]
         return (
           <Marker
             key={index}
-            position={location}
+            position={position}
             eventHandlers={{
               click: (e) => {
                 setLocation(location)
@@ -79,9 +90,7 @@ const Leaflet = ({ location, setLocation, setActiveTab }) => {
               }
             }}
           >
-            <Popup>
-              A pretty CSS3 popup. <br /> Easily customizable.
-            </Popup>
+            <Popup>{`${location.address} <br> ${location.name}`}</Popup>
           </Marker>
         )
       })}

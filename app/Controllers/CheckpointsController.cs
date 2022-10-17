@@ -12,47 +12,47 @@ namespace app.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MembersController : ControllerBase
+    public class CheckpointsController : ControllerBase
     {
-        private readonly MemberContext _context;
+        private readonly CheckpointContext _context;
 
-        public MembersController(MemberContext context)
+        public CheckpointsController(CheckpointContext context)
         {
             _context = context;
         }
 
-        // GET: api/Members
+        // GET: api/Checkpoints
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Member>>> Index()
-        {
-            return await _context.Members.ToListAsync();
+        public async Task<ActionResult<IEnumerable<Checkpoint>>> GetCheckpoints()
+        {   
+            return await _context.Checkpoints.ToListAsync();
         }
 
-        // GET: api/Members/5
+        // GET: api/Checkpoints/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Member>> GetMember(int id)
+        public async Task<ActionResult<Checkpoint>> GetCheckpoint(int id)
         {
-            var member = await _context.Members.FindAsync(id);
+            var checkpoint = await _context.Checkpoints.FindAsync(id);
 
-            if (member == null)
+            if (checkpoint == null)
             {
                 return NotFound();
             }
 
-            return member;
+            return checkpoint;
         }
 
-        // PUT: api/Members/5
+        // PUT: api/Checkpoints/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMember(int id, Member member)
+        public async Task<IActionResult> PutCheckpoint(int id, Checkpoint checkpoint)
         {
-            if (id != member.Id)
+            if (id != checkpoint.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(member).State = EntityState.Modified;
+            _context.Entry(checkpoint).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +60,7 @@ namespace app.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!MemberExists(id))
+                if (!CheckpointExists(id))
                 {
                     return NotFound();
                 }
@@ -73,40 +73,42 @@ namespace app.Controllers
             return NoContent();
         }
 
-        // POST: api/Members
+        // POST: api/Checkpoints
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Member>> Create([FromBody] Member member)
+        public async Task<ActionResult<Checkpoint>> Create([FromBody] Checkpoint checkpoint)
         {
+            System.Console.WriteLine("asd");
             if (ModelState.IsValid)
             {
-                _context.Members.Add(member);
+                _context.Checkpoints.Add(checkpoint);
                 await _context.SaveChangesAsync();
-                return CreatedAtAction("GetMember", new { id = member.Id }, member);
+                return CreatedAtAction("GetCheckpoint", new { id = checkpoint.Id }, checkpoint);
             }
             var errors = ModelState.GetErrors;
             return BadRequest(new { errors });
+
         }
 
-        // DELETE: api/Members/5
+        // DELETE: api/Checkpoints/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMember(int id)
+        public async Task<IActionResult> DeleteCheckpoint(int id)
         {
-            var member = await _context.Members.FindAsync(id);
-            if (member == null)
+            var checkpoint = await _context.Checkpoints.FindAsync(id);
+            if (checkpoint == null)
             {
                 return NotFound();
             }
 
-            _context.Members.Remove(member);
+            _context.Checkpoints.Remove(checkpoint);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool MemberExists(int id)
+        private bool CheckpointExists(int id)
         {
-            return _context.Members.Any(e => e.Id == id);
+            return _context.Checkpoints.Any(e => e.Id == id);
         }
     }
 }

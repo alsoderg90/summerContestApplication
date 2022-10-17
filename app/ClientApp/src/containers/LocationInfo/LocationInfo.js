@@ -50,10 +50,7 @@ const LocationInfo = ({ location }) => {
       onSubmit={handleSubmit}
       schema={schema}
       defaultValue={{
-        members: [
-          { name: 'John Doe', points: 5 },
-          { name: 'Jane Doe', points: 2 }
-        ]
+        members: members
       }}
     >
       {address}

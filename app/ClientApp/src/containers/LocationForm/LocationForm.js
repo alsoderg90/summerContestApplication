@@ -3,10 +3,11 @@ import PropTypes from 'prop-types'
 import Form from 'react-formal'
 import * as yup from 'yup'
 import { useEffect, useState } from 'react'
+import checkpointsService from '../../api/checkpoints'
 
-const createSchema = (address) => {
+const createSchema = () => {
   return yup.object({
-    address: yup.string().required().default(address),
+    address: yup.string().required(),
     name: yup.string().required()
   })
 }
@@ -17,16 +18,18 @@ const LocationForm = ({ location }) => {
     ? location.address.house_number
     : ''
   const address = `${road} ${houseNumber}`
-
-  const schema = createSchema(address)
-  const [form, setForm] = useState(schema.default())
+  const lat = location?.lat
+  const lon = location?.lon
+  const schema = createSchema()
+  const [form, setForm] = useState()
 
   useEffect(() => {
-    setForm({ ...form, address })
+    setForm({ ...form, address, lat, lon })
   }, [address])
 
   const handleSubmit = (formData) => {
-    alert(JSON.stringify(formData, null, 2))
+    console.log(formData)
+    checkpointsService.create(formData)
   }
 
   return (
@@ -35,7 +38,6 @@ const LocationForm = ({ location }) => {
       schema={schema}
       onChange={setForm}
       onSubmit={handleSubmit}
-      defaultValue={schema.default()}
       className='location-form'
     >
       {!location ? (

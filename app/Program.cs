@@ -8,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<MemberContext>(opt =>
     opt.UseInMemoryDatabase("MemberList"));
+builder.Services.AddDbContext<CheckpointContext>(opt =>
+    opt.UseInMemoryDatabase("CheckpointList"));
 
 var app = builder.Build();
 
