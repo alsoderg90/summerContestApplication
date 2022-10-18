@@ -13,5 +13,6 @@ namespace app.Models
         [Required]
         public string? Nationality { get; set; }
         public string? FlagUrl { get; set; }
+        public List<LocationMember>? Points { get; set; }
     }
 }

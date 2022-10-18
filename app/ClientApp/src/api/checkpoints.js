@@ -12,11 +12,11 @@ const create = async (newCheckpoint) => {
 }
 
 const Delete = async (id) => {
-  return axios.delete(`${apiUrl}${id}`)
+  return axios.delete(`${apiUrl}/${id}`)
 }
 
 const Edit = async (id, object) => {
-  return axios.put(`${apiUrl}${id}`, object)
+  return axios.put(`${apiUrl}/${id}`, object)
 }
 
 const checkpointsService = {

@@ -6,15 +6,18 @@ import * as yup from 'yup'
 import { BsFillTrashFill } from 'react-icons/bs'
 import { useEffect, useState } from 'react'
 import memberService from '../../api/members'
+import checkpointsService from '../../api/checkpoints'
 
-const member = yup.object({
-  name: yup.string().required('Required'),
-  points: yup.string().required('Required').default(0)
-})
-
-const createSchema = () =>
+const member = (id) =>
   yup.object({
-    members: yup.array().of(member).min(1, 'Must have at least one member')
+    memberId: yup.number().required('Required'),
+    points: yup.number().required('Required').default(0),
+    locationId: yup.number().default(id)
+  })
+
+const createSchema = (id) =>
+  yup.object({
+    points: yup.array().of(member(id)).min(1, 'Must have at least one member')
   })
 
 const LocationInfo = ({ location }) => {
@@ -24,7 +27,7 @@ const LocationInfo = ({ location }) => {
     : ''
   const address = `${road} ${houseNumber}`
 
-  const schema = createSchema()
+  const schema = createSchema(location?.id)
   const [form, setForm] = useState(schema.default())
   const [members, setMembers] = useState()
 
@@ -41,8 +44,9 @@ const LocationInfo = ({ location }) => {
     setForm({ ...form, address })
   }, [address, members])
 
-  const handleSubmit = (formValue) => {
-    alert(JSON.stringify({ ...formValue, location }, null, 2))
+  const handleSubmit = ({ points }) => {
+    checkpointsService.Edit(location.id, { ...location, points })
+    console.log({ ...location, points })
   }
 
   return (
@@ -55,7 +59,7 @@ const LocationInfo = ({ location }) => {
     >
       {address}
       <Container>
-        <Form.FieldArray name='members'>
+        <Form.FieldArray name='points'>
           {(values, arrayHelpers, meta) => (
             <>
               {values
@@ -74,12 +78,12 @@ const LocationInfo = ({ location }) => {
                             as={DropdownList}
                             data={members}
                             textField='name'
-                            name={`members[${index}].name`}
+                            name={`points[${index}].memberId`}
                             dataKey='id'
-                            mapFromValue={(fieldValue) => `${fieldValue.name}`}
+                            mapFromValue='id'
                           />
                           <Form.Message
-                            for={`members[${index}].name`}
+                            for={`points[${index}].name`}
                             className='error -mt-2'
                           />
                         </Col>
@@ -87,10 +91,10 @@ const LocationInfo = ({ location }) => {
                           <label>Points:</label>
                           <Form.Field
                             as={NumberPicker}
-                            name={`members[${index}].points`}
+                            name={`points[${index}].points`}
                           />
                           <Form.Message
-                            for={`members[${index}].points`}
+                            for={`points[${index}].points`}
                             className='error -mt-2'
                           />
                         </Col>
@@ -113,8 +117,7 @@ const LocationInfo = ({ location }) => {
                   <Button
                     variant='secondary'
                     onClick={() => {
-                      const newMember = { id: 120, name: '', points: 0 }
-                      arrayHelpers.push(newMember)
+                      arrayHelpers.push({})
                     }}
                   >
                     Add Member

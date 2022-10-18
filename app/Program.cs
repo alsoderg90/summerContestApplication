@@ -10,6 +10,8 @@ builder.Services.AddDbContext<MemberContext>(opt =>
     opt.UseInMemoryDatabase("MemberList"));
 builder.Services.AddDbContext<CheckpointContext>(opt =>
     opt.UseInMemoryDatabase("CheckpointList"));
+builder.Services.AddDbContext<LocationMemberContext>(opt =>
+    opt.UseInMemoryDatabase("LocationMemberList"));
 
 var app = builder.Build();
 

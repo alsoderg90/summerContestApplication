@@ -25,7 +25,9 @@ namespace app.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Checkpoint>>> GetCheckpoints()
         {   
-            return await _context.Checkpoints.ToListAsync();
+            return await _context.Checkpoints
+                .Include(b => b.Points).
+                ToListAsync();
         }
 
         // GET: api/Checkpoints/5
@@ -78,7 +80,6 @@ namespace app.Controllers
         [HttpPost]
         public async Task<ActionResult<Checkpoint>> Create([FromBody] Checkpoint checkpoint)
         {
-            System.Console.WriteLine("asd");
             if (ModelState.IsValid)
             {
                 _context.Checkpoints.Add(checkpoint);
