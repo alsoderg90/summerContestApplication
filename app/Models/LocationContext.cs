@@ -4,17 +4,19 @@ using System.Collections.Generic;
 
 namespace app.Models
 {
-    public class CheckpointContext : DbContext
+    public class LocationContext : DbContext
     {
 
-        public CheckpointContext(DbContextOptions<CheckpointContext> options) : base(options)
+        public LocationContext(DbContextOptions<LocationContext> options) : base(options)
         {
         }
-        public DbSet<Checkpoint> Checkpoints { get; set; } = null!;
+        public DbSet<Location> Checkpoints { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Checkpoint>()
-                .HasKey(m => m.Id);
+            modelBuilder.Entity<Location>()
+                .HasKey(l => l.Id);
+            modelBuilder.Entity<Location>()
+                .HasMany(l => l.Points);
         }
     }
 }

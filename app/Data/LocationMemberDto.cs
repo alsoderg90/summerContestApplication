@@ -1,14 +1,14 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using app.Models;
 
-namespace app.Models
+namespace app.Data
 {
-    public class LocationMember
-    {   
+    public class LocationMemberDto
+    {
         public int Id { get; set; }
         public int? LocationId { get; set; }
-        public Location? Location { get; set; }
         public int? MemberId { get; set; }
         public Member? Member { get; set; }
         public int Points { get; set; }
+
     }
 }

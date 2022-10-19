@@ -7,29 +7,45 @@ import { BsFillTrashFill } from 'react-icons/bs'
 import { useEffect, useState } from 'react'
 import memberService from '../../api/members'
 import checkpointsService from '../../api/checkpoints'
+import LocationMembers from '../../api/LocationMembers'
 
 const member = (id) =>
   yup.object({
     memberId: yup.number().required('Required'),
     points: yup.number().required('Required').default(0),
-    locationId: yup.number().default(id)
+    locationId: yup.number().nullable().default(null),
+    location: yup.object().nullable().default(null),
+    member: yup.object().nullable().default(null)
   })
 
 const createSchema = (id) =>
   yup.object({
-    points: yup.array().of(member(id)).min(1, 'Must have at least one member')
+    points: yup.array().of(member(id)).min(1, 'Must have at least one member'),
+    address: yup.string(),
+    title: yup.string()
   })
 
 const LocationInfo = ({ location }) => {
-  const road = location?.address?.road ? location.address.road : ''
-  const houseNumber = location?.address?.house_number
-    ? location.address.house_number
-    : ''
-  const address = `${road} ${houseNumber}`
+  //   const road = location?.address?.road ? location.address.road : ''
+  //   const houseNumber = location?.address?.house_number
+  //     ? location.address.house_number
+  //     : ''
+  const address = location?.display_name
+  const lat = location?.lat
+  const lon = location?.lon
 
   const schema = createSchema(location?.id)
   const [form, setForm] = useState(schema.default())
   const [members, setMembers] = useState()
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await LocationMembers.getAll()
+      const members = res.data
+      setMembers(members)
+    }
+    fetchData().catch(console.error)
+  }, [])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,21 +60,37 @@ const LocationInfo = ({ location }) => {
     setForm({ ...form, address })
   }, [address, members])
 
-  const handleSubmit = ({ points }) => {
-    checkpointsService.Edit(location.id, { ...location, points })
-    console.log({ ...location, points })
+  const handleSubmit = (form) => {
+    const { title, address, points } = form
+    checkpointsService.create({ title, address, lat, lon, points })
   }
 
   return (
     <Form
       onSubmit={handleSubmit}
+      onChange={setForm}
       schema={schema}
       defaultValue={{
         members: members
       }}
+      value={form}
     >
-      {address}
       <Container>
+        <FormGroup className='mb-3' controlId='formBasicEmail'>
+          <label style={{ display: 'block' }}>Address:</label>
+          <Form.Field className='form-label' disabled={true} name='address' />
+        </FormGroup>
+        <FormGroup className='mb-3' controlId='formBasicPassword'>
+          <label style={{ display: 'block' }}>Name:</label>
+          <Form.Field className='form-label' name='title' />
+        </FormGroup>
+        {Object.keys(schema?.fields).map((field, index) => {
+          return (
+            <div key={index}>
+              <Form.Message for={[field]} className='error' />
+            </div>
+          )
+        })}
         <Form.FieldArray name='points'>
           {(values, arrayHelpers, meta) => (
             <>

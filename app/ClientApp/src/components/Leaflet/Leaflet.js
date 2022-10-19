@@ -32,7 +32,7 @@ const LocationMarker = ({ setLocation, location, setActiveTab }) => {
       )
       .then((res) => {
         setLocation(res.data)
-        setActiveTab('location')
+        setActiveTab('info')
       })
       .catch((err) => {
         console.log(err.message)

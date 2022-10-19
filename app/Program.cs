@@ -1,14 +1,18 @@
 using Microsoft.EntityFrameworkCore;
 using app.Models;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Services.AddControllers().AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.AddControllersWithViews();
+builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddDbContext<MemberContext>(opt =>
     opt.UseInMemoryDatabase("MemberList"));
-builder.Services.AddDbContext<CheckpointContext>(opt =>
+builder.Services.AddDbContext<LocationContext>(opt =>
     opt.UseInMemoryDatabase("CheckpointList"));
 builder.Services.AddDbContext<LocationMemberContext>(opt =>
     opt.UseInMemoryDatabase("LocationMemberList"));

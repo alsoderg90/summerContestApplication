@@ -20,6 +20,9 @@ namespace app.Models
         {
             modelBuilder.Entity<Member>()
                 .HasKey(m => m.Id);
+
+            modelBuilder.Entity<Member>()
+                .HasMany(m => m.Points);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Drawing;
 
 namespace app.Models
 {
@@ -8,19 +9,21 @@ namespace app.Models
         {
         }
         public DbSet<LocationMember> LocationMembers { get; set; } = null!;
-        public DbSet<Checkpoint> Checkpoints { get; set; } = null!;
+        public DbSet<Location> Checkpoints { get; set; } = null!;
         public DbSet<Member> Members { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<LocationMember>()
-                .HasOne(Point => Point.Location)
+                .HasKey(Lm => Lm.Id);
+            modelBuilder.Entity<LocationMember>()
+                .HasOne(Lm => Lm.Location)
                 .WithMany(Location => Location.Points)
                 .HasForeignKey(Point => Point.LocationId);
             modelBuilder.Entity<LocationMember>()
-                .HasOne(Point => Point.Member)
+                .HasOne(Lm => Lm.Member)
                 .WithMany(Member => Member.Points)
-                .HasForeignKey(Point => Point.MemberId);
+                .HasForeignKey(Lm => Lm.MemberId);
         }
     }
 }

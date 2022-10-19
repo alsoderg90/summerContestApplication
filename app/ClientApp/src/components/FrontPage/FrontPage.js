@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import Leaflet from '../Leaflet/Leaflet'
-import FormTab from '../FormTab/FormTab'
+import FormTabs from '../FormTab/FormTabs'
 import { Container, Col, Row } from 'react-bootstrap'
 
 const FrontPage = () => {
   const [location, setLocation] = useState(undefined)
-  const [activeTab, setActiveTab] = useState('location')
+  const [activeTab, setActiveTab] = useState('info')
   return (
     <Container>
       <Row>
@@ -17,7 +17,7 @@ const FrontPage = () => {
           />
         </Col>
         <Col>
-          <FormTab
+          <FormTabs
             location={location}
             activeTab={activeTab}
             setActiveTab={setActiveTab}

@@ -25,7 +25,9 @@ namespace app.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Member>>> Index()
         {
-            return await _context.Members.ToListAsync();
+            return await _context.Members
+                .Include(m => m.Points)
+                .ToListAsync();
         }
 
         // GET: api/Members/5
