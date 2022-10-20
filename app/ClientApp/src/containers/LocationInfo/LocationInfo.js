@@ -5,6 +5,10 @@ import Form from 'react-formal'
 import * as yup from 'yup'
 import { BsFillTrashFill } from 'react-icons/bs'
 import { useEffect, useState } from 'react'
+import {
+  DeleteButtonWithConfirmation,
+  DeleteButton
+} from '../../components/Buttons/buttons'
 import memberService from '../../api/members'
 import checkpointsService from '../../api/checkpoints'
 
@@ -39,6 +43,7 @@ const LocationInfo = ({ location, locations, setLocations }) => {
   const schema = createSchema(location?.id)
   const [form, setForm] = useState(schema.default())
   const [SelectableMembers, setSelectableMembers] = useState()
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
 
   const members = location?.points?.map((point) => {
     const { name } = point.member
@@ -145,12 +150,12 @@ const LocationInfo = ({ location, locations, setLocations }) => {
                               <label style={{ display: 'block' }}>
                                 Delete:
                               </label>
-                              <Button
-                                variant='danger'
+                              <DeleteButtonWithConfirmation
+                                show={showDeleteModal}
+                                showModal={() => setShowDeleteModal(true)}
+                                handleClose={() => setShowDeleteModal(false)}
                                 onClick={() => arrayHelpers.remove(member)}
-                              >
-                                <BsFillTrashFill />
-                              </Button>
+                              ></DeleteButtonWithConfirmation>
                             </Col>
                           </Row>
                         </FormGroup>

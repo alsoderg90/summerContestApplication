@@ -33,7 +33,6 @@ const Teams = () => {
     alert(JSON.stringify(formData, null, 2))
   }
 
-  console.log(members)
   return (
     <Container>
       <Form

@@ -46,8 +46,6 @@ const Members = () => {
     fetchData().catch(console.error)
   }, [])
 
-  console.log(points)
-
   const handleSubmit = async (formData) => {
     try {
       const res = await restCountriesService.get(formData)
