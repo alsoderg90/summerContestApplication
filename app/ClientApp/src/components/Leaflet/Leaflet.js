@@ -11,7 +11,6 @@ import axios from 'axios'
 import L from 'leaflet'
 import marker from '../../assets/marker-icon-2x-green.png'
 import markerShadow from '../../assets/marker-shadow.png'
-import checkpointsService from '../../api/checkpoints'
 
 const greenIcon = L.icon({
   iconUrl: marker,
@@ -23,7 +22,12 @@ const greenIcon = L.icon({
   shadowSize: [41, 41]
 })
 
-const LocationMarker = ({ setLocation, location, setActiveTab }) => {
+const LocationMarker = ({
+  setNewLocation,
+  newLocation,
+  setActiveTab,
+  setIsNewLocation
+}) => {
   useMapEvent('click', (e) => {
     const { lat, lng } = e.latlng
     axios
@@ -31,22 +35,30 @@ const LocationMarker = ({ setLocation, location, setActiveTab }) => {
         `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`
       )
       .then((res) => {
-        setLocation(res.data)
+        setNewLocation(res.data)
         setActiveTab('info')
+        setIsNewLocation(true)
       })
       .catch((err) => {
         console.log(err.message)
       })
   })
 
-  return location === undefined ? null : (
-    <Marker icon={greenIcon} position={location}>
+  return newLocation === undefined ? null : (
+    <Marker icon={greenIcon} position={newLocation}>
       <Popup>You are here</Popup>
     </Marker>
   )
 }
 
-const Leaflet = ({ location, setLocation, setActiveTab }) => {
+const Leaflet = ({
+  newLocation,
+  setNewLocation,
+  setActiveTab,
+  setSelectedLocation,
+  setIsNewLocation,
+  locations
+}) => {
   useEffect(() => {
     delete L.Icon.Default.prototype._getIconUrl
 
@@ -55,16 +67,6 @@ const Leaflet = ({ location, setLocation, setActiveTab }) => {
       iconUrl: require('leaflet/dist/images/marker-icon.png'),
       shadowUrl: require('leaflet/dist/images/marker-shadow.png')
     })
-  }, [])
-
-  const [locations, setLocations] = useState()
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await checkpointsService.getAll()
-      setLocations(res.data)
-    }
-    fetchData().catch(console.error)
   }, [])
 
   return (
@@ -85,8 +87,9 @@ const Leaflet = ({ location, setLocation, setActiveTab }) => {
             position={position}
             eventHandlers={{
               click: (e) => {
-                setLocation(location)
+                setSelectedLocation(location)
                 setActiveTab('info')
+                setIsNewLocation(false)
               }
             }}
           >
@@ -96,24 +99,30 @@ const Leaflet = ({ location, setLocation, setActiveTab }) => {
       })}
 
       <LocationMarker
-        location={location}
-        setLocation={setLocation}
+        newLocation={newLocation}
+        setNewLocation={setNewLocation}
         setActiveTab={setActiveTab}
+        setIsNewLocation={setIsNewLocation}
       />
     </MapContainer>
   )
 }
 
 LocationMarker.propTypes = {
-  setLocation: PropTypes.func.isRequired,
-  location: PropTypes.object,
-  setActiveTab: PropTypes.func
+  setNewLocation: PropTypes.func.isRequired,
+  newLocation: PropTypes.object,
+  setActiveTab: PropTypes.func,
+  setIsNewLocation: PropTypes.func
 }
 
 Leaflet.propTypes = {
-  setLocation: PropTypes.func.isRequired,
-  location: PropTypes.object,
-  setActiveTab: PropTypes.func
+  locations: PropTypes.array,
+  setLocations: PropTypes.func,
+  setSelectedLocation: PropTypes.func.isRequired,
+  setNewLocation: PropTypes.func.isRequired,
+  newLocation: PropTypes.object,
+  setActiveTab: PropTypes.func,
+  setIsNewLocation: PropTypes.func
 }
 
 export default Leaflet

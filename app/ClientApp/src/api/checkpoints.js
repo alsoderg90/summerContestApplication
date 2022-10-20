@@ -7,7 +7,6 @@ const getAll = async () => {
 }
 
 const create = async (newCheckpoint) => {
-  console.log(newCheckpoint)
   return axios.post(apiUrl, newCheckpoint)
 }
 

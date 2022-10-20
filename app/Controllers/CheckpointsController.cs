@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using app.Models;
 using app.Data;
 using app.Extensions;
-using AutoMapper;
+using ExpressMapper;
 using ExpressMapper.Extensions;
 
 namespace app.Controllers
@@ -17,30 +17,38 @@ namespace app.Controllers
     [ApiController]
     public class CheckpointsController : ControllerBase
     {
-        private readonly IMapper _mapper;
         private readonly LocationContext _context;
         private readonly MemberContext _memberContext;
         private readonly LocationMemberContext _locationMemberContext;
 
-        public CheckpointsController(LocationContext context, MemberContext memberContext, LocationMemberContext locationMemberContext, IMapper mapper)
+        public CheckpointsController(LocationContext context, MemberContext memberContext, LocationMemberContext locationMemberContext)
         {
             _context = context;
             _memberContext = memberContext;
             _locationMemberContext = locationMemberContext;
-            _mapper = mapper;
         }
 
         // GET: api/Checkpoints
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Location>>> GetCheckpoints()
+        public async Task<ActionResult<List<LocationDto>>> GetCheckpoints()
         {
             var queryResult = await _context.Checkpoints
                 .Include(b => b.Points)
-                .ThenInclude(b => b.Member)
                 .ToListAsync();
 
-            //List<LocationDto> result = _mapper.Map<List<LocationDto>>(queryResult);
-            return queryResult;
+            foreach(var qr in queryResult)
+            {   if (qr.Points != null)
+                foreach (var points in qr.Points)
+                    {   
+                        
+                        Member member = await _memberContext.Members.FindAsync(points.MemberId);
+                        points.Member = member;
+                    };
+
+            };
+            List<LocationDto> locationDto = Mapper.Map<List<Location>, List<LocationDto>>(queryResult);
+
+            return locationDto;
         }
 
         // GET: api/Checkpoints/5
@@ -105,13 +113,14 @@ namespace app.Controllers
         {
             if (ModelState.IsValid)
             {   
+                if (checkpoint.Points != null)
                 foreach (var points in checkpoint.Points)
                 {
                     var member = await _memberContext.Members.FindAsync(points.MemberId);
                     _context.Attach(member);
 
                 }
-                _context.Checkpoints.Add(checkpoint);
+                _context.Checkpoints.Add(checkpoint);                
                 await _context.SaveChangesAsync();
 
                 return CreatedAtAction("GetCheckpoint", new { id = checkpoint.Id }, checkpoint);
@@ -140,6 +149,11 @@ namespace app.Controllers
         private bool CheckpointExists(int id)
         {
             return _context.Checkpoints.Any(e => e.Id == id);
+        }
+
+        private bool CheckpointsExists()
+        {
+            return _context.Checkpoints.Count() != 0;
         }
     }
 }
