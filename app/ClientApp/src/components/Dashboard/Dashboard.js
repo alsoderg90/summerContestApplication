@@ -1,16 +1,16 @@
 import { Container, Row, Col } from 'react-bootstrap'
-import TeamForm from '../../containers/TeamForm/TeamForm'
-import MemberForm from '../../containers/MemberForm/MemberForm'
+import Teams from '../../containers/Teams/Teams'
+import Members from '../../containers/Members/Members'
 
 const Dashboard = () => {
   return (
     <Container>
       <Row>
         <Col>
-          <TeamForm />
+          <Teams />
         </Col>
         <Col>
-          <MemberForm />
+          <Members />
         </Col>
       </Row>
     </Container>
