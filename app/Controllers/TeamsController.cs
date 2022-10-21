@@ -6,56 +6,58 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using app.Models;
-using app.Extensions;
 using app.Services;
+using AutoMapper.Execution;
+using app.Extensions;
+using System.Diagnostics.Metrics;
 
 namespace app.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MembersController : ControllerBase
+    public class TeamsController : ControllerBase
     {
-        private readonly MemberService _memberService;
+        private readonly TeamService _teamService;
 
-        public MembersController(MemberService memberService)
+        public TeamsController(TeamService teamService)
         {
-            _memberService = memberService;
+            _teamService = teamService;
         }
 
-        // GET: api/Members
+        // GET: api/Teams
         [HttpGet]
-        public async Task<ActionResult<Member>> Index()
+        public async Task<ActionResult<IEnumerable<Team>>> GetTeams()
         {
-            var members = await _memberService.GetAll();
-            if (members == null) return NotFound();
-            return Ok(members);
+            var teams = await _teamService.GetAll();
+            if (teams == null) return NotFound();
+            return Ok(teams);
         }
 
-        // GET: api/Members/5
+        // GET: api/Teams/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Member>> GetMember(int id)
+        public async Task<ActionResult<Team>> GetTeam(int id)
         {
-            var member = await _memberService.GetById(id);
+            var teams = await _teamService.GetById(id);
 
-            if (member == null)
+            if (teams == null)
             {
                 return NotFound();
             }
 
-            return member;
+            return Ok(teams);
         }
 
-        // PUT: api/Members/5
+        // PUT: api/Teams/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<ActionResult<Member>> PutMember(int id, Member member)
+        public async Task<IActionResult> PutTeam(int id, Team team)
         {
-            if (id != member.Id)
+            if (id != team.Id)
             {
                 return BadRequest();
             }
 
-            var updatedMember = await _memberService.Update(id, member);
+            var updatedMember = await _teamService.Update(id, team);
             if (updatedMember != null)
             {
                 NotFound();
@@ -63,31 +65,31 @@ namespace app.Controllers
             return Ok(updatedMember);
         }
 
-        // POST: api/Members
+        // POST: api/Teams
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Member>> Create([FromBody] Member member)
+        public async Task<ActionResult<Team>> PostTeam(Team team)
         {
             if (ModelState.IsValid)
             {
-                var createdMember = await _memberService.Create(member);
+                var createdMember = await _teamService.Create(team);
                 return Ok(createdMember);
             }
             var errors = ModelState.GetErrors;
             return BadRequest(new { errors });
         }
 
-        // DELETE: api/Members/5
+        // DELETE: api/Teams/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteMember(int id)
+        public async Task<IActionResult> DeleteTeam(int id)
         {
-            var member = await _memberService.Delete(id);
-            if (member == null)
+            var checkpoint = await _teamService.Delete(id);
+            if (checkpoint == null)
             {
                 return NotFound();
             }
 
-            return Ok();
+            return NoContent();
         }
     }
 }

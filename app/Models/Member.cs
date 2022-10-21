@@ -13,6 +13,8 @@ namespace app.Models
         [Required]
         public string? Nationality { get; set; }
         public string? FlagUrl { get; set; }
-        public List<LocationMember>? Points { get; set; }
+        public List<Point>? Points { get; set; }
+        public int TeamId { get; set; }
+        public Team? Team { get; set; }
     }
 }

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import Leaflet from '../Leaflet/Leaflet'
 import FormTabs from '../FormTab/FormTabs'
 import { Container, Col, Row } from 'react-bootstrap'
-import checkpointsService from '../../api/checkpoints'
+import locationService from '../../api/locations'
 
 const FrontPage = () => {
   const [newLocation, setNewLocation] = useState(undefined)
@@ -13,8 +13,8 @@ const FrontPage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await checkpointsService.getAll()
-      setLocations(res.data)
+      const response = await locationService.getAll()
+      setLocations(response)
     }
     fetchData().catch(console.error)
   }, [])

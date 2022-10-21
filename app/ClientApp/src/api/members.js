@@ -3,26 +3,28 @@ import axios from 'axios'
 const apiUrl = '/api/members'
 
 const getAll = async () => {
-  return axios.get(apiUrl)
+  const response = await axios.get(apiUrl)
+  return response.data
 }
 
 const create = async (newMember) => {
-  return axios.post(apiUrl, newMember)
+  const response = await axios.post(apiUrl, newMember)
+  return response.data
 }
 
-const Delete = async (id) => {
+const remove = async (id) => {
   return axios.delete(`${apiUrl}${id}`)
 }
 
-const Edit = async (id, object) => {
+const update = async (id, object) => {
   return axios.put(`${apiUrl}${id}`, object)
 }
 
 const memberService = {
   getAll,
   create,
-  Delete,
-  Edit
+  remove,
+  update
 }
 
 export default memberService

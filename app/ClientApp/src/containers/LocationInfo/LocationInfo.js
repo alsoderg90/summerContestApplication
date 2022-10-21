@@ -3,14 +3,10 @@ import PropTypes from 'prop-types'
 import { DropdownList, NumberPicker } from 'react-widgets'
 import Form from 'react-formal'
 import * as yup from 'yup'
-import { BsFillTrashFill } from 'react-icons/bs'
 import { useEffect, useState } from 'react'
-import {
-  DeleteButtonWithConfirmation,
-  DeleteButton
-} from '../../components/Buttons/buttons'
+import { DeleteButtonWithConfirmation } from '../../components/Buttons/buttons'
 import memberService from '../../api/members'
-import checkpointsService from '../../api/checkpoints'
+import locationService from '../../api/locations'
 
 const member = (id) =>
   yup.object({
@@ -53,8 +49,7 @@ const LocationInfo = ({ location, locations, setLocations }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await memberService.getAll()
-      const members = res.data
+      const members = await memberService.getAll()
       setSelectableMembers(members)
     }
     fetchData().catch(console.error)
@@ -67,8 +62,8 @@ const LocationInfo = ({ location, locations, setLocations }) => {
   const handleSubmit = async (form) => {
     const { title, address, points } = form
     const location = { title, address, lat, lon, points }
-    const response = await checkpointsService.create(location)
-    setLocations(locations.concat(response.data))
+    const response = await locationService.create(location)
+    setLocations(locations.concat(response))
     setForm({})
   }
 

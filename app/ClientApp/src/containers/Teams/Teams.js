@@ -22,8 +22,7 @@ const Teams = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await memberService.getAll()
-      const members = res.data
+      const members = await memberService.getAll()
       setMembers(members)
     }
     fetchData().catch(console.error)

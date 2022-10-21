@@ -13,7 +13,7 @@ import * as yup from 'yup'
 import { countryList } from './constants'
 import restCountriesService from '../../api/restcountries'
 import memberService from '../../api/members'
-import locationMembers from '../../api/locationMembers'
+import pointService from '../../api/points'
 
 const createSchema = () => {
   return yup.object({
@@ -30,8 +30,7 @@ const Members = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await memberService.getAll()
-      const members = res.data
+      const members = await memberService.getAll()
       setMembers(members)
     }
     fetchData().catch(console.error)
@@ -39,7 +38,7 @@ const Members = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await locationMembers.getAll()
+      const res = await pointService.getAll()
       const points = res.data
       setPoints(points)
     }
@@ -51,14 +50,15 @@ const Members = () => {
       const res = await restCountriesService.get(formData)
       const { svg } = res.data[0].flags
       const newForm = { ...formData, flagUrl: svg }
-      setForm(newForm)
-      memberService.create(newForm)
+      const response = await memberService.create(newForm)
+      setMembers(members.concat(response))
     } catch (e) {
       const newForm = { ...formData, flag: '' }
-      setForm(newForm)
-      memberService.create(newForm)
+      const response = await memberService.create(newForm)
+      setMembers(members.concat(response))
       console.warn(e)
     }
+    setForm({})
   }
 
   return (

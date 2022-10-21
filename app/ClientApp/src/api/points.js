@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const apiUrl = '/api/LocationMembers'
+const apiUrl = '/api/points'
 
 const getAll = async () => {
   return axios.get(apiUrl)
@@ -14,15 +14,15 @@ const Delete = async (id) => {
   return axios.delete(`${apiUrl}${id}`)
 }
 
-const Edit = async (id, object) => {
+const update = async (id, object) => {
   return axios.put(`${apiUrl}${id}`, object)
 }
 
-const LocationMembers = {
+const pointServive = {
   getAll,
   create,
   Delete,
-  Edit
+  update
 }
 
-export default LocationMembers
+export default pointServive
