@@ -14,29 +14,29 @@ namespace app.Repositories
 
         public async Task<List<Point>> GetAll()
         {
-            var locationMembers = await _context.Points
-                .Include(lm => lm.Points)
-                .Include(lm => lm.Location)
+            var points = await _context.Points
+                .Include(p => p.Member)
+                .Include(p => p.Location)
                 .ToListAsync();
 
-            return locationMembers;
+            return points;
         }
 
         public async Task<Point> GetById(int locationId, int memberId)
         {
-            var locationMember = await _context.Points.FindAsync(locationId, memberId);
-            return locationMember;
+            var point = await _context.Points.FindAsync(locationId, memberId);
+            return point;
         }
 
-        public async Task<Point> Create(Point locationMember)
+        public async Task<Point> Create(Point point)
         {
-            _context.Points.Add(locationMember);
+            _context.Points.Add(point);
             await _context.SaveChangesAsync();
-            return locationMember;
+            return point;
         }
-        public async Task<Point> Update(int locationId, int memberId, Point locationMember)
+        public async Task<Point> Update(int locationId, int memberId, Point point)
         {
-            _context.Entry(locationMember).State = EntityState.Modified;
+            _context.Entry(point).State = EntityState.Modified;
 
             try
             {
@@ -53,21 +53,21 @@ namespace app.Repositories
                     throw new Exception(ex.Message);
                 }
             }
-            return locationMember;
+            return point;
         }
 
         public async Task<Point> Remove(int locationId, int memberId)
         {
-            var locationMember = await _context.Points.FindAsync(locationId, memberId);
-            if (locationMember == null)
+            var point = await _context.Points.FindAsync(locationId, memberId);
+            if (point == null)
             {
                 return null;
             }
 
-            _context.Points.Remove(locationMember);
+            _context.Points.Remove(point);
             await _context.SaveChangesAsync();
 
-            return locationMember;
+            return point;
         }
 
         private bool LocationExists(int locationId, int memberId)

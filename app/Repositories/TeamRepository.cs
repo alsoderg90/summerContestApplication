@@ -15,6 +15,7 @@ namespace app.Repositories
         {
             var members = await _context.Teams
                     .Include(t => t.Members)
+                    .ThenInclude(t => t.Points)
                     .ToListAsync();
 
             return members;
@@ -28,7 +29,10 @@ namespace app.Repositories
 
         public async Task<Team> Create(Team team)
         {
-            
+            foreach(var member in team.Members)
+            {
+                _context.Attach(member);
+            }
             _context.Teams.Add(team);
             await _context.SaveChangesAsync();
             return team;

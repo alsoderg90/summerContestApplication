@@ -9,7 +9,6 @@ const getAll = async () => {
 
 const create = async (newLocation) => {
   const response = await axios.post(apiUrl, newLocation)
-  console.log(response)
   return response.data
 }
 

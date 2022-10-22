@@ -38,7 +38,7 @@ const LocationInfo = ({ location, locations, setLocations }) => {
 
   const schema = createSchema(location?.id)
   const [form, setForm] = useState(schema.default())
-  const [SelectableMembers, setSelectableMembers] = useState()
+  const [selectableMembers, setSelectableMembers] = useState()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
 
   const members = location?.points?.map((point) => {
@@ -57,7 +57,7 @@ const LocationInfo = ({ location, locations, setLocations }) => {
 
   useEffect(() => {
     setForm({ ...form, address, title, points: members })
-  }, [address, SelectableMembers])
+  }, [address, selectableMembers, locations])
 
   const handleSubmit = async (form) => {
     const { title, address, points } = form
@@ -104,58 +104,54 @@ const LocationInfo = ({ location, locations, setLocations }) => {
             <Form.FieldArray name='points'>
               {(values, arrayHelpers, meta) => (
                 <>
-                  {values
-                    //?.sort((a, b) => b.points + a.points)
-                    ?.map((member, index) => {
-                      return (
-                        <FormGroup
-                          key={index}
-                          className='mb-3'
-                          controlId='formBasicPassword'
-                        >
-                          <Row>
-                            <Col>
-                              <label>Name:</label>
-                              <Form.Field
-                                as={DropdownList}
-                                data={SelectableMembers}
-                                textField='name'
-                                name={`points[${index}].memberId`}
-                                dataKey='id'
-                                mapFromValue='id'
-                              />
-                              <Form.Message
-                                for={`points[${index}].memberId`}
-                                className='form-errors'
-                                style={{ paddingTop: '0.5em' }}
-                              />
-                            </Col>
-                            <Col>
-                              <label>Points:</label>
-                              <Form.Field
-                                as={NumberPicker}
-                                name={`points[${index}].points`}
-                              />
-                              <Form.Message
-                                for={`points[${index}].points`}
-                                className='error -mt-2'
-                              />
-                            </Col>
-                            <Col>
-                              <label style={{ display: 'block' }}>
-                                Delete:
-                              </label>
-                              <DeleteButtonWithConfirmation
-                                show={showDeleteModal}
-                                showModal={() => setShowDeleteModal(true)}
-                                handleClose={() => setShowDeleteModal(false)}
-                                onClick={() => arrayHelpers.remove(member)}
-                              ></DeleteButtonWithConfirmation>
-                            </Col>
-                          </Row>
-                        </FormGroup>
-                      )
-                    })}
+                  {values?.map((member, index) => {
+                    return (
+                      <FormGroup
+                        key={index}
+                        className='mb-3'
+                        controlId='formBasicPassword'
+                      >
+                        <Row>
+                          <Col>
+                            <label>Name:</label>
+                            <Form.Field
+                              as={DropdownList}
+                              data={selectableMembers}
+                              textField='name'
+                              name={`points[${index}].memberId`}
+                              dataKey='id'
+                              mapFromValue='id'
+                            />
+                            <Form.Message
+                              for={`points[${index}].memberId`}
+                              className='form-errors'
+                              style={{ paddingTop: '0.5em' }}
+                            />
+                          </Col>
+                          <Col>
+                            <label>Points:</label>
+                            <Form.Field
+                              as={NumberPicker}
+                              name={`points[${index}].points`}
+                            />
+                            <Form.Message
+                              for={`points[${index}].points`}
+                              className='error -mt-2'
+                            />
+                          </Col>
+                          <Col>
+                            <label style={{ display: 'block' }}>Delete:</label>
+                            <DeleteButtonWithConfirmation
+                              show={showDeleteModal}
+                              showModal={() => setShowDeleteModal(true)}
+                              handleClose={() => setShowDeleteModal(false)}
+                              onClick={() => arrayHelpers.remove(member)}
+                            ></DeleteButtonWithConfirmation>
+                          </Col>
+                        </Row>
+                      </FormGroup>
+                    )
+                  })}
                   <Row>
                     <Col>
                       <Button

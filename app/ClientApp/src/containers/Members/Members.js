@@ -14,6 +14,7 @@ import { countryList } from './constants'
 import restCountriesService from '../../api/restcountries'
 import memberService from '../../api/members'
 import pointService from '../../api/points'
+import { getUserPoints } from '../../utils/functions'
 
 const createSchema = () => {
   return yup.object({
@@ -122,7 +123,7 @@ const Members = () => {
                     src={member.flagUrl}
                   ></Image>
                 </td>
-                <td>0</td>
+                <td>{getUserPoints(points, member.id)}</td>
               </tr>
             ))}
           </tbody>
