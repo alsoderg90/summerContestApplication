@@ -1,5 +1,5 @@
 /* eslint-disable quotes */
-export const countryList = [
+export const COUNTRY_LIST = [
   'Afghanistan',
   'Åland Islands',
   'Albania',

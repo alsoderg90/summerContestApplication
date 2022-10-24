@@ -1,30 +1,16 @@
-import axios from 'axios'
+import { get, create } from './api_helper'
 
-const apiUrl = '/api/locations'
+const LOCATIONS = 'api/locations'
 
-const getAll = async () => {
-  const response = await axios.get(apiUrl)
-  return response.data
-}
+//Locations
+export const getLocations = () => get(LOCATIONS)
 
-const create = async (newLocation) => {
-  const response = await axios.post(apiUrl, newLocation)
-  return response.data
-}
+export const createLocation = (newLocation) => create(LOCATIONS, newLocation)
 
-const remove = async (id) => {
-  return axios.delete(`${apiUrl}/${id}`)
-}
-
-const update = async (id, object) => {
-  return axios.put(`${apiUrl}/${id}`, object)
-}
-
-const locationService = {
-  getAll,
-  create,
-  remove,
-  update
-}
-
-export default locationService
+//Post
+// export const getPostDetails = (id) =>
+//   get(url.GET_LOCATIONS, {
+//     params: {
+//       id: id
+//     }
+//   })

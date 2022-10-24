@@ -1,11 +1,14 @@
+import { useState, useEffect } from 'react'
 import { Container, Row, FormGroup, Table, Image } from 'react-bootstrap'
 import { DatePicker, Multiselect } from 'react-widgets'
+import { useDispatch, useSelector } from 'react-redux'
 import Form from 'react-formal'
 import * as yup from 'yup'
-import { useState, useEffect } from 'react'
 
-import memberService from '../../api/members'
-import teamService from '../../api/teams'
+import { getMembers } from '../../redux/modules/members/actions'
+import { selectMembers } from '../../redux/modules/members/selectors'
+import { getTeams, createTeam } from '../../redux/modules/teams/actions'
+import { selectTeams } from '../../redux/modules/teams/selectors'
 import { getUserPoints } from '../../utils/functions'
 
 const createSchema = () => {
@@ -17,34 +20,23 @@ const createSchema = () => {
 }
 
 const Teams = () => {
+  const dispatch = useDispatch()
   const schema = createSchema()
   const [form, setForm] = useState()
 
-  const [members, setMembers] = useState()
-  const [teams, setTeams] = useState()
+  const members = useSelector((state) => selectMembers(state))
+  const teams = useSelector((state) => selectTeams(state))
 
   useEffect(() => {
-    const fetchData = async () => {
-      const members = await memberService.getAll()
-      setMembers(members)
-    }
-    fetchData().catch(console.error)
-  }, [])
-
-  console.log(teams)
+    if (!teams) dispatch(getTeams())
+  }, [teams])
 
   useEffect(() => {
-    const fetchData = async () => {
-      const teams = await teamService.getAll()
-      setTeams(teams)
-    }
-    fetchData().catch(console.error)
-  }, [])
+    if (!members) dispatch(getMembers())
+  }, [members])
 
-  const handleSubmit = async (formData) => {
-    const team = await teamService.create(formData)
-    setForm({})
-    setTeams(teams.concat(teams))
+  const handleSubmit = (formData) => {
+    dispatch(createTeam(formData))
   }
 
   return (

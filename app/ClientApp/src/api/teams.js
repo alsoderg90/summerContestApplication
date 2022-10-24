@@ -1,30 +1,7 @@
-import axios from 'axios'
+import { get, create } from './api_helper'
 
-const apiUrl = '/api/teams'
+const TEAMS = 'api/teams'
 
-const getAll = async () => {
-  const response = await axios.get(apiUrl)
-  return response.data
-}
+export const getTeams = () => get(TEAMS)
 
-const create = async (newMember) => {
-  const response = await axios.post(apiUrl, newMember)
-  return response.data
-}
-
-const remove = async (id) => {
-  return axios.delete(`${apiUrl}${id}`)
-}
-
-const update = async (id, object) => {
-  return axios.put(`${apiUrl}${id}`, object)
-}
-
-const teamService = {
-  getAll,
-  create,
-  remove,
-  update
-}
-
-export default teamService
+export const createTeam = (newTeam) => create(TEAMS, newTeam)

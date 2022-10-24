@@ -1,45 +1,28 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { useSelector } from 'react-redux'
 import Leaflet from '../Leaflet/Leaflet'
 import FormTabs from '../FormTab/FormTabs'
 import { Container, Col, Row } from 'react-bootstrap'
-import locationService from '../../api/locations'
+import {
+  selectNewLocation,
+  selectSelectedLocation
+} from '../../redux/modules/locations/selectors'
 
 const FrontPage = () => {
-  const [newLocation, setNewLocation] = useState(undefined)
+  const newLocation = useSelector((state) => selectNewLocation(state))
+  const selectedLocation = useSelector((state) => selectSelectedLocation(state))
   const [activeTab, setActiveTab] = useState('info')
-  const [selectedLocation, setSelectedLocation] = useState(undefined)
-  const [isNewLocation, setIsNewLocation] = useState(false)
-  const [locations, setLocations] = useState()
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await locationService.getAll()
-      setLocations(response)
-    }
-    fetchData().catch(console.error)
-  }, [])
 
   return (
     <Container>
       <Row>
         <Col lg={true}>
-          <Leaflet
-            newLocation={newLocation}
-            setNewLocation={setNewLocation}
-            setActiveTab={setActiveTab}
-            setSelectedLocation={setSelectedLocation}
-            setIsNewLocation={setIsNewLocation}
-            locations={locations}
-          />
+          <Leaflet newLocation={newLocation} setActiveTab={setActiveTab} />
         </Col>
         <Col>
           <FormTabs
-            location={isNewLocation ? newLocation : selectedLocation}
+            location={newLocation ? newLocation : selectedLocation}
             activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            selectedLocation={selectedLocation}
-            setLocations={setLocations}
-            locations={locations}
           />
         </Col>
       </Row>

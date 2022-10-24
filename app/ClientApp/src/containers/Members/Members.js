@@ -8,13 +8,17 @@ import {
   Table
 } from 'react-bootstrap'
 import { DropdownList } from 'react-widgets'
+import { useDispatch, useSelector } from 'react-redux'
 import Form from 'react-formal'
 import * as yup from 'yup'
-import { countryList } from './constants'
+
+import { COUNTRY_LIST } from './constants'
 import restCountriesService from '../../api/restcountries'
-import memberService from '../../api/members'
-import pointService from '../../api/points'
+import { getMembers, createMember } from '../../redux/modules/members/actions'
+import { getPoints } from '../../redux/modules/points/actions'
 import { getUserPoints } from '../../utils/functions'
+import { selectMembers } from '../../redux/modules/members/selectors'
+import { selectPoints } from '../../redux/modules/points/selectors'
 
 const createSchema = () => {
   return yup.object({
@@ -24,39 +28,30 @@ const createSchema = () => {
 }
 
 const Members = () => {
+  const dispatch = useDispatch()
+  const members = useSelector((state) => selectMembers(state))
+  const points = useSelector((state) => selectPoints(state))
+
   const schema = createSchema()
   const [form, setForm] = useState()
-  const [members, setMembers] = useState()
-  const [points, setPoints] = useState()
 
   useEffect(() => {
-    const fetchData = async () => {
-      const members = await memberService.getAll()
-      setMembers(members)
-    }
-    fetchData().catch(console.error)
-  }, [])
+    if (!members) dispatch(getMembers())
+  }, [members])
 
   useEffect(() => {
-    const fetchData = async () => {
-      const res = await pointService.getAll()
-      const points = res.data
-      setPoints(points)
-    }
-    fetchData().catch(console.error)
-  }, [])
+    if (!points) dispatch(getPoints())
+  }, [points])
 
   const handleSubmit = async (formData) => {
     try {
       const res = await restCountriesService.get(formData)
       const { svg } = res.data[0].flags
-      const newForm = { ...formData, flagUrl: svg }
-      const response = await memberService.create(newForm)
-      setMembers(members.concat(response))
+      const newMember = { ...formData, flagUrl: svg }
+      dispatch(createMember(newMember))
     } catch (e) {
-      const newForm = { ...formData, flag: '' }
-      const response = await memberService.create(newForm)
-      setMembers(members.concat(response))
+      const newMember = { ...formData, flag: '' }
+      dispatch(createMember(newMember))
       console.warn(e)
     }
     setForm({})
@@ -82,7 +77,7 @@ const Members = () => {
               <label style={{ display: 'block' }}>Nationality:</label>
               <Form.Field
                 as={DropdownList}
-                data={countryList}
+                data={COUNTRY_LIST}
                 name='nationality'
                 renderListItem={({ item }) =>
                   item.charAt(0).toUpperCase() + item.slice(1)

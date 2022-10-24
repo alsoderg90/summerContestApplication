@@ -4,15 +4,11 @@ import PropTypes from 'prop-types'
 
 import LocationInfo from '../../containers/LocationInfo/LocationInfo'
 
-const FormTabs = ({ location, activeTab, setLocations, locations }) => {
+const FormTabs = ({ location, activeTab }) => {
   return (
     <Tabs defaultActiveKey='location' activeKey={activeTab} className='mb-3'>
       <Tab eventKey='info' title='Info'>
-        <LocationInfo
-          location={location}
-          setLocations={setLocations}
-          locations={locations}
-        ></LocationInfo>
+        <LocationInfo location={location}></LocationInfo>
       </Tab>
     </Tabs>
   )
@@ -20,10 +16,7 @@ const FormTabs = ({ location, activeTab, setLocations, locations }) => {
 
 FormTabs.propTypes = {
   location: PropTypes.object,
-  activeTab: PropTypes.string,
-  setActiveTab: PropTypes.func,
-  setLocations: PropTypes.func,
-  locations: PropTypes.array
+  activeTab: PropTypes.string
 }
 
 export default FormTabs

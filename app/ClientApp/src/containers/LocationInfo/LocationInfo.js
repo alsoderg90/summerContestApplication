@@ -1,12 +1,16 @@
+import { useEffect, useState } from 'react'
 import { FormGroup, Container, Alert, Row, Col, Button } from 'react-bootstrap'
 import PropTypes from 'prop-types'
 import { DropdownList, NumberPicker } from 'react-widgets'
-import Form from 'react-formal'
+import { useDispatch, useSelector } from 'react-redux'
 import * as yup from 'yup'
-import { useEffect, useState } from 'react'
+import Form from 'react-formal'
+
+import { selectLocations } from '../../redux/modules/locations/selectors'
+import { selectMembers } from '../../redux/modules/members/selectors'
 import { DeleteButtonWithConfirmation } from '../../components/Buttons/buttons'
-import memberService from '../../api/members'
-import locationService from '../../api/locations'
+import { createLocation } from '../../redux/modules/locations/actions'
+import { getMembers } from '../../redux/modules/members/actions'
 
 const member = (id) =>
   yup.object({
@@ -28,7 +32,10 @@ const createSchema = (id) =>
     title: yup.string().required('Name is a required field')
   })
 
-const LocationInfo = ({ location, locations, setLocations }) => {
+const LocationInfo = ({ location }) => {
+  const locations = useSelector((state) => selectLocations(state))
+  const selectableMembers = useSelector((state) => selectMembers(state))
+  const dispatch = useDispatch()
   const address = location?.display_name
     ? location?.display_name
     : location?.address
@@ -38,7 +45,6 @@ const LocationInfo = ({ location, locations, setLocations }) => {
 
   const schema = createSchema(location?.id)
   const [form, setForm] = useState(schema.default())
-  const [selectableMembers, setSelectableMembers] = useState()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
 
   const members = location?.points?.map((point) => {
@@ -48,23 +54,17 @@ const LocationInfo = ({ location, locations, setLocations }) => {
   })
 
   useEffect(() => {
-    const fetchData = async () => {
-      const members = await memberService.getAll()
-      setSelectableMembers(members)
-    }
-    fetchData().catch(console.error)
+    if (!selectableMembers) dispatch(getMembers())
   }, [])
 
   useEffect(() => {
     setForm({ ...form, address, title, points: members })
-  }, [address, selectableMembers, locations])
+  }, [address, selectableMembers, locations, location])
 
-  const handleSubmit = async (form) => {
+  const handleSubmit = (form) => {
     const { title, address, points } = form
     const location = { title, address, lat, lon, points }
-    const response = await locationService.create(location)
-    setLocations(locations.concat(response))
-    setForm({})
+    dispatch(createLocation(location))
   }
 
   return (
@@ -176,9 +176,7 @@ const LocationInfo = ({ location, locations, setLocations }) => {
 }
 
 LocationInfo.propTypes = {
-  location: PropTypes.object,
-  locations: PropTypes.array,
-  setLocations: PropTypes.func
+  location: PropTypes.object
 }
 
 export default LocationInfo
