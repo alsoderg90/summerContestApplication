@@ -23,7 +23,13 @@ export const DeleteButtonWithConfirmation = ({
           <Button variant='secondary' onClick={handleClose}>
             Close
           </Button>
-          <Button variant='danger' onClick={onClick}>
+          <Button
+            variant='danger'
+            onClick={() => {
+              onClick()
+              handleClose()
+            }}
+          >
             <BsFillTrashFill />
           </Button>
         </Modal.Footer>

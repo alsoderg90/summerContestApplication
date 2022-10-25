@@ -12,20 +12,20 @@ import { DeleteButtonWithConfirmation } from '../../components/Buttons/buttons'
 import { createLocation } from '../../redux/modules/locations/actions'
 import { getMembers } from '../../redux/modules/members/actions'
 
-const member = (id) =>
+const member = () =>
   yup.object({
     memberId: yup.number().required('Required'),
-    points: yup.number().required('Required').default(0),
+    points: yup.number().required('Required'),
     locationId: yup.number().nullable().default(null),
     location: yup.object().nullable().default(null),
     member: yup.object().nullable().default(null)
   })
 
-const createSchema = (id) =>
+const createSchema = () =>
   yup.object({
     points: yup
       .array()
-      .of(member(id))
+      .of(member())
       .min(1, 'Must have at least one member')
       .required('Must have at least one member'),
     address: yup.string().required(),
@@ -123,7 +123,7 @@ const LocationInfo = ({ location }) => {
                               mapFromValue='id'
                             />
                             <Form.Message
-                              for={`points[${index}].memberId`}
+                              name={`points[${index}].memberId`}
                               className='form-errors'
                               style={{ paddingTop: '0.5em' }}
                             />
@@ -133,10 +133,11 @@ const LocationInfo = ({ location }) => {
                             <Form.Field
                               as={NumberPicker}
                               name={`points[${index}].points`}
+                              defaultValue={0}
                             />
                             <Form.Message
-                              for={`points[${index}].points`}
-                              className='error -mt-2'
+                              name={`points[${index}].points`}
+                              className='form-errors'
                             />
                           </Col>
                           <Col>

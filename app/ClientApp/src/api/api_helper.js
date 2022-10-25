@@ -14,17 +14,19 @@ axiosApi.interceptors.response.use(
 )
 
 export async function get(url, config) {
-  return await axios
+  const response = await axios
     .get(url, {
       ...config
     })
     .then((response) => response.data)
+  return response
 }
 
 export async function create(url, entity, config) {
-  return await axios
+  const response = await axios
     .post(url, entity, {
       ...config
     })
     .then((response) => response.data)
+  return response
 }

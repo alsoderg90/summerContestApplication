@@ -1,29 +1,35 @@
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import Leaflet from '../Leaflet/Leaflet'
-import FormTabs from '../FormTab/FormTabs'
+import FormTabs from '../FormTabs/FormTabs'
 import { Container, Col, Row } from 'react-bootstrap'
 import {
   selectNewLocation,
   selectSelectedLocation
 } from '../../redux/modules/locations/selectors'
+import LocationInfo from '../../containers/LocationInfo/LocationInfo'
 
 const FrontPage = () => {
   const newLocation = useSelector((state) => selectNewLocation(state))
   const selectedLocation = useSelector((state) => selectSelectedLocation(state))
-  const [activeTab, setActiveTab] = useState('info')
+  const [activeTab, setActiveTab] = useState('Locations')
+
+  const tabs = [
+    <LocationInfo
+      key='Locations'
+      location={newLocation ? newLocation : selectedLocation}
+      name='Locations'
+    ></LocationInfo>
+  ]
 
   return (
     <Container>
       <Row>
         <Col lg={true}>
-          <Leaflet newLocation={newLocation} setActiveTab={setActiveTab} />
+          <Leaflet newLocation={newLocation} />
         </Col>
         <Col>
-          <FormTabs
-            location={newLocation ? newLocation : selectedLocation}
-            activeTab={activeTab}
-          />
+          <FormTabs tabs={tabs} activeTab={activeTab} />
         </Col>
       </Row>
     </Container>

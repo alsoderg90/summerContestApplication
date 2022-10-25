@@ -1,11 +1,16 @@
 import FrontPage from './components/FrontPage/FrontPage'
-import Dashboard from './components/Dashboard/Dashboard'
+import Members from './containers/Members/Members'
+import Teams from './containers/Teams/Teams'
 import Login from './containers/Login/Login'
 
 const AppRoutes = [
   {
-    path: '/dashboard',
-    element: <Dashboard />
+    path: '/dashboard/members',
+    element: <Members />
+  },
+  {
+    path: '/dashboard/teams',
+    element: <Teams />
   },
   {
     path: '/login',

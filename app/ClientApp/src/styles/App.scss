@@ -2,6 +2,18 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
 @import 'react-widgets/scss/styles.scss';
 
+$black: rgb(33, 37, 41);
+
+.dropdown-menu {
+  --bs-dropdown-bg: rgb(33, 37, 41);
+  --bs-dropdown-border-color: rgb(33, 37, 41);
+}
+
+.dropdown-item {
+  --bs-dropdown-link-active-bg: rgb(33, 37, 41, 0.5);
+  --bs-dropdown-link-hover-bg: #2d343b;
+}
+
 .form-label {
   width: 100%;
   padding: 6px 20px;

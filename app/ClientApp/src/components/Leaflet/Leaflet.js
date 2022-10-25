@@ -47,7 +47,7 @@ const LocationMarker = ({ newLocation, setActiveTab }) => {
       )
       .then((res) => {
         handleClick(res.data)
-        setActiveTab('info')
+        //setActiveTab('info')
       })
       .catch((err) => {
         console.log(err.message)
@@ -99,7 +99,6 @@ const Leaflet = ({ setActiveTab }) => {
             eventHandlers={{
               click: (e) => {
                 dispatch(setSelectedLocation(location))
-                setActiveTab('info')
               }
             }}
           >
