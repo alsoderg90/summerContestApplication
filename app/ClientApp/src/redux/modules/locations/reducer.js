@@ -6,7 +6,10 @@ import {
   CREATE_LOCATION_ERROR,
   CREATE_LOCATION_SUCCESS,
   SET_NEW_LOCATION_ACTION,
-  SET_SELECTED_LOCATION_ACTION
+  SET_SELECTED_LOCATION_ACTION,
+  DELETE_LOCATION_ACTION,
+  DELETE_LOCATION_SUCCESS,
+  DELETE_LOCATION_ERROR
 } from './constants'
 
 const initialState = {
@@ -23,10 +26,12 @@ const initialState = {
 const locationReducer = (state = initialState, action) => {
   switch (action.type) {
     case CREATE_LOCATION_ACTION:
+    case DELETE_LOCATION_ACTION:
     case GET_LOCATIONS_ACTION:
       state = { ...state, loadingLocations: true }
       break
     case CREATE_LOCATION_ERROR:
+    case DELETE_LOCATION_ERROR:
     case GET_LOCATIONS_ERROR:
       state = { ...state, error: { message: 'Error' }, loadingLocations: false }
       break
@@ -39,6 +44,17 @@ const locationReducer = (state = initialState, action) => {
         locations: state.locations.concat(action.payload),
         loadingLocations: false
       }
+      break
+    case DELETE_LOCATION_SUCCESS:
+      state = {
+        ...state,
+        locations: state.locations.filter(
+          (location) => location.id !== action.payload
+        ),
+        selectedLocation: undefined,
+        loadingLocations: false
+      }
+      console.log(state.locations)
       break
     case SET_NEW_LOCATION_ACTION:
       state = {

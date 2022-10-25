@@ -17,11 +17,16 @@ import { COUNTRY_LIST } from './constants'
 import Charts from '../../components/Charts/Charts'
 import FormTabs from '../../components/FormTabs/FormTabs'
 import restCountriesService from '../../api/restcountries'
-import { getMembers, createMember } from '../../redux/modules/members/actions'
+import {
+  getMembers,
+  createMember,
+  deleteMember
+} from '../../redux/modules/members/actions'
 import { getPoints } from '../../redux/modules/points/actions'
 import { getUserPoints } from '../../utils/functions'
 import { selectMembers } from '../../redux/modules/members/selectors'
 import { selectPoints } from '../../redux/modules/points/selectors'
+import { DeleteButton } from '../../components/Buttons/buttons'
 
 const createSchema = () => {
   return yup.object({
@@ -58,6 +63,10 @@ const Members = () => {
       console.warn(e)
     }
     setForm({})
+  }
+
+  const handleDelete = (id) => {
+    dispatch(deleteMember(id))
   }
 
   return (
@@ -112,6 +121,7 @@ const Members = () => {
                     <th>Name</th>
                     <th>Nationality</th>
                     <th>Points</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -127,6 +137,11 @@ const Members = () => {
                         ></Image>
                       </td>
                       <td>{getUserPoints(member.points, member.id)}</td>
+                      <td>
+                        <DeleteButton
+                          onClick={() => handleDelete(member.id)}
+                        ></DeleteButton>
+                      </td>
                     </tr>
                   ))}
                 </tbody>

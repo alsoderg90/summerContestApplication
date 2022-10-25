@@ -1,4 +1,4 @@
-import { get, create } from './api_helper'
+import { get, create, remove } from './api_helper'
 
 const LOCATIONS = 'api/locations'
 
@@ -6,6 +6,8 @@ const LOCATIONS = 'api/locations'
 export const getLocations = () => get(LOCATIONS)
 
 export const createLocation = (newLocation) => create(LOCATIONS, newLocation)
+
+export const deleteLocation = (locationId) => remove(LOCATIONS, locationId)
 
 //Post
 // export const getPostDetails = (id) =>

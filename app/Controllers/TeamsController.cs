@@ -57,12 +57,12 @@ namespace app.Controllers
                 return BadRequest();
             }
 
-            var updatedMember = await _teamService.Update(id, team);
-            if (updatedMember != null)
+            var updatedTeam = await _teamService.Update(id, team);
+            if (updatedTeam != null)
             {
                 NotFound();
             }
-            return Ok(updatedMember);
+            return Ok(updatedTeam);
         }
 
         // POST: api/Teams
@@ -72,8 +72,8 @@ namespace app.Controllers
         {
             if (ModelState.IsValid)
             {
-                var createdMember = await _teamService.Create(team);
-                return Ok(createdMember);
+                var createdTeam = await _teamService.Create(team);
+                return Ok(createdTeam);
             }
             var errors = ModelState.GetErrors;
             return BadRequest(new { errors });
@@ -81,15 +81,15 @@ namespace app.Controllers
 
         // DELETE: api/Teams/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTeam(int id)
+        public async Task<ActionResult<int>> DeleteTeam(int id)
         {
-            var checkpoint = await _teamService.Delete(id);
-            if (checkpoint == null)
+            var team = await _teamService.Delete(id);
+            if (team == null)
             {
                 return NotFound();
             }
 
-            return NoContent();
+            return Ok(team.Id);
         }
     }
 }

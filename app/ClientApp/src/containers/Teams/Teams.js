@@ -10,13 +10,18 @@ import {
 } from 'react-bootstrap'
 import { DatePicker, Multiselect } from 'react-widgets'
 import { useDispatch, useSelector } from 'react-redux'
+import { DeleteButton } from '../../components/Buttons/buttons'
 import Form from 'react-formal'
 import * as yup from 'yup'
 
 import FormTabs from '../../components/FormTabs/FormTabs'
 import { getMembers } from '../../redux/modules/members/actions'
 import { selectMembers } from '../../redux/modules/members/selectors'
-import { getTeams, createTeam } from '../../redux/modules/teams/actions'
+import {
+  getTeams,
+  createTeam,
+  deleteTeam
+} from '../../redux/modules/teams/actions'
 import { selectTeams } from '../../redux/modules/teams/selectors'
 import { getUserPoints, getTeamPoints } from '../../utils/functions'
 
@@ -48,6 +53,10 @@ const Teams = () => {
     dispatch(createTeam(formData))
   }
 
+  const handleDelete = (id) => {
+    dispatch(deleteTeam(id))
+  }
+
   const renderTeamTables = (teams) => {
     return teams?.map((team, i) => (
       <Table
@@ -62,6 +71,12 @@ const Teams = () => {
           <tr>
             <th colSpan={2}>{team.name.toUpperCase()} </th>
             <th colSpan={1}> {getTeamPoints(team.members)}</th>
+            <th colSpan={1}>
+              {' '}
+              <DeleteButton
+                onClick={() => handleDelete(team.id)}
+              ></DeleteButton>
+            </th>
           </tr>
           <tr>
             <th>Name</th>
@@ -82,6 +97,7 @@ const Teams = () => {
                 ></Image>
               </td>
               <td>{getUserPoints(member.points, member.id)}</td>
+              <td></td>
             </tr>
           ))}
         </tbody>
@@ -143,7 +159,11 @@ const Teams = () => {
           </Form>
         </Col>
         <Col sm={8}>
-          <FormTabs tabs={renderTeamTables(teams)}></FormTabs>
+          {teams && teams.length > 0 ? (
+            <FormTabs tabs={renderTeamTables(teams)}></FormTabs>
+          ) : (
+            <></>
+          )}
         </Col>
       </Row>
     </Container>

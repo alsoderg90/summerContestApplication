@@ -89,15 +89,15 @@ namespace app.Controllers
 
         // DELETE: api/Checkpoints/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCheckpoint(int id)
+        public async Task<ActionResult<int>> DeleteCheckpoint(int id)
         {
-            var checkpoint = await _locationService.Delete(id);
-            if (checkpoint == null)
+            var location = await _locationService.Delete(id);
+            if (location == null)
             {
                 return NotFound();
             }
 
-            return NoContent();
+            return Ok(location.Id);
         }
     }
 }

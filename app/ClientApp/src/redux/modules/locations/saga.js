@@ -1,12 +1,22 @@
 import { takeLatest, put, call } from 'redux-saga/effects'
-import { GET_LOCATIONS_ACTION, CREATE_LOCATION_ACTION } from './constants'
-import { getLocations, createLocation } from '../../../api/locations'
+import {
+  GET_LOCATIONS_ACTION,
+  CREATE_LOCATION_ACTION,
+  DELETE_LOCATION_ACTION
+} from './constants'
+import {
+  getLocations,
+  createLocation,
+  deleteLocation
+} from '../../../api/locations'
 
 import {
   getLocationsError,
   getLocationsSuccess,
   createLocationSuccess,
-  createLocationError
+  createLocationError,
+  deleteLocationError,
+  deleteLocationSuccess
 } from './actions'
 
 function* onGetLocations() {
@@ -27,9 +37,19 @@ function* onCreateLocation({ newLocation }) {
   }
 }
 
+function* onDeleteMember({ id }) {
+  try {
+    const response = yield call(() => deleteLocation(id))
+    yield put(deleteLocationSuccess(response))
+  } catch (error) {
+    yield put(deleteLocationError(error))
+  }
+}
+
 function* locationSaga() {
   yield takeLatest(GET_LOCATIONS_ACTION, onGetLocations)
   yield takeLatest(CREATE_LOCATION_ACTION, onCreateLocation)
+  yield takeLatest(DELETE_LOCATION_ACTION, onDeleteMember)
 }
 
 export default locationSaga

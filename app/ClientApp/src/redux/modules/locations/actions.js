@@ -6,7 +6,10 @@ import {
   CREATE_LOCATION_ERROR,
   CREATE_LOCATION_SUCCESS,
   SET_NEW_LOCATION_ACTION,
-  SET_SELECTED_LOCATION_ACTION
+  SET_SELECTED_LOCATION_ACTION,
+  DELETE_LOCATION_ACTION,
+  DELETE_LOCATION_SUCCESS,
+  DELETE_LOCATION_ERROR
 } from './constants'
 
 export const getLocations = () => {
@@ -30,7 +33,6 @@ export const getLocationsError = (error) => {
 }
 
 export const createLocation = (newLocation) => {
-  console.log(newLocation)
   return {
     type: CREATE_LOCATION_ACTION,
     newLocation
@@ -38,7 +40,6 @@ export const createLocation = (newLocation) => {
 }
 
 export const createLocationSuccess = (location) => {
-  console.log('moi')
   return {
     type: CREATE_LOCATION_SUCCESS,
     payload: location
@@ -63,5 +64,26 @@ export const setSelectedLocation = (selectedLocation) => {
   return {
     type: SET_SELECTED_LOCATION_ACTION,
     selectedLocation
+  }
+}
+
+export const deleteLocation = (id) => {
+  return {
+    type: DELETE_LOCATION_ACTION,
+    id
+  }
+}
+
+export const deleteLocationSuccess = (deletedLocation) => {
+  return {
+    type: DELETE_LOCATION_SUCCESS,
+    payload: deletedLocation
+  }
+}
+
+export const deleteLocationError = (error) => {
+  return {
+    type: DELETE_LOCATION_ERROR,
+    payload: error
   }
 }

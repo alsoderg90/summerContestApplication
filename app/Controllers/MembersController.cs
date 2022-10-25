@@ -79,7 +79,7 @@ namespace app.Controllers
 
         // DELETE: api/Members/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteMember(int id)
+        public async Task<ActionResult<int>> DeleteMember(int id)
         {
             var member = await _memberService.Delete(id);
             if (member == null)
@@ -87,7 +87,7 @@ namespace app.Controllers
                 return NotFound();
             }
 
-            return Ok();
+            return Ok(member.Id);
         }
     }
 }

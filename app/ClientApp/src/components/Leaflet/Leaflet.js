@@ -32,7 +32,7 @@ const greenIcon = L.icon({
   shadowSize: [41, 41]
 })
 
-const LocationMarker = ({ newLocation, setActiveTab }) => {
+const LocationMarker = ({ newLocation }) => {
   const dispatch = useDispatch()
 
   const handleClick = (data) => {

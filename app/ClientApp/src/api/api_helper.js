@@ -30,3 +30,12 @@ export async function create(url, entity, config) {
     .then((response) => response.data)
   return response
 }
+
+export async function remove(url, id, config) {
+  const response = await axios
+    .delete(`${url}/${id}`, {
+      ...config
+    })
+    .then((response) => response.data)
+  return response
+}

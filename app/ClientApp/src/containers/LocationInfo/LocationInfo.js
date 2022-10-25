@@ -5,11 +5,13 @@ import { DropdownList, NumberPicker } from 'react-widgets'
 import { useDispatch, useSelector } from 'react-redux'
 import * as yup from 'yup'
 import Form from 'react-formal'
-
+import { DeleteButton } from '../../components/Buttons/buttons'
 import { selectLocations } from '../../redux/modules/locations/selectors'
 import { selectMembers } from '../../redux/modules/members/selectors'
-import { DeleteButtonWithConfirmation } from '../../components/Buttons/buttons'
-import { createLocation } from '../../redux/modules/locations/actions'
+import {
+  createLocation,
+  deleteLocation
+} from '../../redux/modules/locations/actions'
 import { getMembers } from '../../redux/modules/members/actions'
 
 const member = () =>
@@ -45,7 +47,6 @@ const LocationInfo = ({ location }) => {
 
   const schema = createSchema(location?.id)
   const [form, setForm] = useState(schema.default())
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
 
   const members = location?.points?.map((point) => {
     const { name } = point.member
@@ -65,6 +66,10 @@ const LocationInfo = ({ location }) => {
     const { title, address, points } = form
     const location = { title, address, lat, lon, points }
     dispatch(createLocation(location))
+  }
+
+  const handleDelete = (id) => {
+    dispatch(deleteLocation(id))
   }
 
   return (
@@ -142,12 +147,9 @@ const LocationInfo = ({ location }) => {
                           </Col>
                           <Col>
                             <label style={{ display: 'block' }}>Delete:</label>
-                            <DeleteButtonWithConfirmation
-                              show={showDeleteModal}
-                              showModal={() => setShowDeleteModal(true)}
-                              handleClose={() => setShowDeleteModal(false)}
+                            <DeleteButton
                               onClick={() => arrayHelpers.remove(member)}
-                            ></DeleteButtonWithConfirmation>
+                            ></DeleteButton>
                           </Col>
                         </Row>
                       </FormGroup>
@@ -163,7 +165,14 @@ const LocationInfo = ({ location }) => {
                       >
                         Add Member
                       </Button>{' '}
-                      <Button type='submit'>Submit</Button>
+                      <Button type='submit'>Submit</Button>{' '}
+                      {location.id ? (
+                        <DeleteButton
+                          onClick={() => handleDelete(location.id)}
+                        ></DeleteButton>
+                      ) : (
+                        <></>
+                      )}
                     </Col>
                   </Row>
                 </>
