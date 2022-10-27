@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@mui/lab": "^5.0.0-alpha.105",
+    "@mui/material": "^5.10.11",
     "@reduxjs/toolkit": "^1.8.6",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -10,6 +12,9 @@
     "axios": "^0.27.2",
     "bootstrap": "^5.2.1",
     "eslint-plugin-jest": "^27.0.4",
+    "formik": "^2.2.9",
+    "formik-mui": "^5.0.0-alpha.0",
+    "formik-mui-lab": "^1.0.0",
     "http-proxy-middleware": "^2.0.6",
     "jquery": "^3.6.0",
     "leaflet": "^1.8.0",

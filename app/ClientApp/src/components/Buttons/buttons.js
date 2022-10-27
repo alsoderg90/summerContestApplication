@@ -3,11 +3,15 @@ import { Modal, Button } from 'react-bootstrap'
 import { BsFillTrashFill } from 'react-icons/bs'
 import PropTypes from 'prop-types'
 
-export const DeleteButton = ({ onClick }) => {
+export const DeleteButton = ({ onClick, ...rest }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   return (
     <>
-      <Button variant='danger' onClick={() => setShowDeleteModal(true)}>
+      <Button
+        {...rest}
+        variant='danger'
+        onClick={() => setShowDeleteModal(true)}
+      >
         <BsFillTrashFill />
       </Button>
 

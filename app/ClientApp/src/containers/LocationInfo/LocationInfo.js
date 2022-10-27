@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
-import { FormGroup, Container, Alert, Row, Col, Button } from 'react-bootstrap'
+import React, { useEffect, useState } from 'react'
+import { Container, Alert, Row, Col, Button } from 'react-bootstrap'
 import PropTypes from 'prop-types'
-import { DropdownList, NumberPicker } from 'react-widgets'
-import { useDispatch, useSelector } from 'react-redux'
+import { Field, FieldArray, Form, Formik } from 'formik'
+import { TextField, Select } from 'formik-mui'
+import { MenuItem } from '@mui/material'
 import * as yup from 'yup'
-import Form from 'react-formal'
+import { useDispatch, useSelector } from 'react-redux'
 import { DeleteButton } from '../../components/Buttons/buttons'
 import { selectLocations } from '../../redux/modules/locations/selectors'
 import { selectMembers } from '../../redux/modules/members/selectors'
@@ -14,22 +15,26 @@ import {
 } from '../../redux/modules/locations/actions'
 import { getMembers } from '../../redux/modules/members/actions'
 
-const member = () =>
-  yup.object({
-    memberId: yup.number().required('Required'),
-    points: yup.number().required('Required'),
-    locationId: yup.number().nullable().default(null),
-    location: yup.object().nullable().default(null),
-    member: yup.object().nullable().default(null)
-  })
+const emptyMember = { memberId: '', points: '' }
+
+const member = yup.object({
+  memberId: yup
+    .number()
+    .typeError('Insert number')
+    .required('Name is required'),
+  points: yup.number().typeError('Insert number').required('Points is required')
+})
 
 const createSchema = () =>
   yup.object({
     points: yup
       .array()
-      .of(member())
+      .of(member)
       .min(1, 'Must have at least one member')
-      .required('Must have at least one member'),
+      .test('is-unique', 'Member already added', (points, context) => {
+        const members = points?.map((point) => point.memberId)
+        return new Set(members).size === members.length
+      }),
     address: yup.string().required(),
     title: yup.string().required('Name is a required field')
   })
@@ -45,8 +50,8 @@ const LocationInfo = ({ location }) => {
   const lat = location?.lat
   const lon = location?.lon
 
-  const schema = createSchema(location?.id)
-  const [form, setForm] = useState(schema.default())
+  const schema = createSchema()
+  const [form, setForm] = useState()
 
   const members = location?.points?.map((point) => {
     const { name } = point.member
@@ -56,16 +61,18 @@ const LocationInfo = ({ location }) => {
 
   useEffect(() => {
     if (!selectableMembers) dispatch(getMembers())
-  }, [])
+  }, [selectableMembers])
 
   useEffect(() => {
     setForm({ ...form, address, title, points: members })
   }, [address, selectableMembers, locations, location])
 
-  const handleSubmit = (form) => {
+  const handleSubmit = (form, { props, resetForm, setSubmitting }) => {
     const { title, address, points } = form
     const location = { title, address, lat, lon, points }
     dispatch(createLocation(location))
+    setSubmitting(false)
+    resetForm()
   }
 
   const handleDelete = (id) => {
@@ -78,108 +85,102 @@ const LocationInfo = ({ location }) => {
       {!location ? (
         <Alert>Set location from map</Alert>
       ) : (
-        <Form
+        <Formik
+          initialValues={{
+            address: address,
+            title: '5',
+            points: [emptyMember]
+          }}
+          validationSchema={schema}
           onSubmit={handleSubmit}
-          onChange={setForm}
-          schema={schema}
-          value={form}
         >
-          <Container>
-            <div style={{ paddingBottom: '1em' }}>
-              {Object.keys(schema?.fields).map((field, index) => {
-                return (
-                  <div key={index}>
-                    <Form.Message for={[field]} className='form-errors' />
-                  </div>
-                )
-              })}
-            </div>
-            <FormGroup className='mb-3' controlId='formBasicEmail'>
-              <label style={{ display: 'block' }}>Address:</label>
-              <Form.Field
-                className='form-label'
-                disabled={true}
-                name='address'
-              />
-            </FormGroup>
-            <FormGroup className='mb-3' controlId='formBasicPassword'>
-              <label style={{ display: 'block' }}>Name:</label>
-              <Form.Field className='form-label' name='title' />
-            </FormGroup>
-            <Form.FieldArray name='points'>
-              {(values, arrayHelpers, meta) => (
-                <>
-                  {values?.map((member, index) => {
-                    return (
-                      <FormGroup
-                        key={index}
-                        className='mb-3'
-                        controlId='formBasicPassword'
-                      >
-                        <Row>
+          {({ values, errors, isSubmitting, isValid }) => (
+            <Form autoComplete='off'>
+              <Container>
+                <Col>
+                  <Field
+                    name='address'
+                    component={TextField}
+                    title='Address'
+                    value={address}
+                  />
+                  <Field
+                    name='title'
+                    type='text'
+                    component={TextField}
+                    label='Name'
+                  />
+                </Col>
+                <Row>
+                  {typeof errors.points === 'string' ? (
+                    <p color='error'></p>
+                  ) : null}
+                </Row>
+                <FieldArray name='points'>
+                  {({ push, remove }) => (
+                    <React.Fragment>
+                      <Row>
+                        <p>Members</p>
+                      </Row>
+
+                      {values.points.map((_, index) => (
+                        <Row key={index} style={{ marginBottom: '1em' }}>
                           <Col>
-                            <label>Name:</label>
-                            <Form.Field
-                              as={DropdownList}
-                              data={selectableMembers}
-                              textField='name'
-                              name={`points[${index}].memberId`}
-                              dataKey='id'
-                              mapFromValue='id'
-                            />
-                            <Form.Message
-                              name={`points[${index}].memberId`}
-                              className='form-errors'
-                              style={{ paddingTop: '0.5em' }}
-                            />
-                          </Col>
-                          <Col>
-                            <label>Points:</label>
-                            <Form.Field
-                              as={NumberPicker}
+                            <Field
+                              name={`points[${index}.memberId`}
+                              component={Select}
+                              label='Name'
+                              type='number'
+                            >
+                              {selectableMembers?.map((sm) => (
+                                <MenuItem key={sm.id} value={sm.id}>
+                                  {sm.name}{' '}
+                                </MenuItem>
+                              ))}
+                            </Field>
+                            <Field
                               name={`points[${index}].points`}
-                              defaultValue={0}
+                              component={TextField}
+                              label='Points'
+                              type='number'
                             />
-                            <Form.Message
-                              name={`points[${index}].points`}
-                              className='form-errors'
-                            />
-                          </Col>
-                          <Col>
-                            <label style={{ display: 'block' }}>Delete:</label>
                             <DeleteButton
-                              onClick={() => arrayHelpers.remove(member)}
-                            ></DeleteButton>
+                              onClick={() => remove(index)}
+                              style={{ marginLeft: '1em' }}
+                            >
+                              Delete
+                            </DeleteButton>
                           </Col>
                         </Row>
-                      </FormGroup>
-                    )
-                  })}
-                  <Row>
-                    <Col>
-                      <Button
-                        variant='secondary'
-                        onClick={() => {
-                          arrayHelpers.push({})
-                        }}
-                      >
-                        Add Member
-                      </Button>{' '}
-                      <Button type='submit'>Submit</Button>{' '}
-                      {location.id ? (
-                        <DeleteButton
-                          onClick={() => handleDelete(location.id)}
-                        ></DeleteButton>
-                      ) : (
-                        <></>
-                      )}
-                    </Col>
-                  </Row>
-                </>
-              )}
-            </Form.FieldArray>
-          </Container>
-        </Form>
+                      ))}
+                      <Row>
+                        <Col>
+                          {typeof errors.points === 'string' ? (
+                            <p style={{ color: 'red' }}> {errors.points}</p>
+                          ) : null}
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col>
+                          <Button onClick={() => push(emptyMember)}>
+                            Add Member
+                          </Button>{' '}
+                          <Button type='submit' color='primary'>
+                            Submit
+                          </Button>{' '}
+                          <DeleteButton
+                            onClick={() => handleDelete(location.id)}
+                          ></DeleteButton>
+                        </Col>
+                      </Row>
+                    </React.Fragment>
+                  )}
+                </FieldArray>
+              </Container>
+              {/* <pre>{JSON.stringify({ values, errors }, null, 4)}</pre> */}
+            </Form>
+          )}
+        </Formik>
       )}
     </>
   )

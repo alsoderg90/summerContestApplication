@@ -1,19 +1,11 @@
-import { useState, useEffect } from 'react'
-import {
-  Container,
-  Button,
-  Col,
-  Row,
-  FormGroup,
-  Table,
-  Image
-} from 'react-bootstrap'
-import { DatePicker, Multiselect } from 'react-widgets'
+import { useEffect } from 'react'
+import { Container, Button, Col, Row, Table, Image } from 'react-bootstrap'
+import { Field, Form, Formik } from 'formik'
+import { TextField, Select } from 'formik-mui'
+import { MenuItem } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import { DeleteButton } from '../../components/Buttons/buttons'
-import Form from 'react-formal'
 import * as yup from 'yup'
-
 import FormTabs from '../../components/FormTabs/FormTabs'
 import { getMembers } from '../../redux/modules/members/actions'
 import { selectMembers } from '../../redux/modules/members/selectors'
@@ -28,15 +20,13 @@ import { getUserPoints, getTeamPoints } from '../../utils/functions'
 const createSchema = () => {
   return yup.object({
     name: yup.string().required(),
-    year: yup.date().required().default(new Date()),
-    members: yup.array().required()
+    members: yup.array().required().min(1, 'Must have at least one member')
   })
 }
 
 const Teams = () => {
   const dispatch = useDispatch()
   const schema = createSchema()
-  const [form, setForm] = useState()
 
   const members = useSelector((state) => selectMembers(state))
   const teams = useSelector((state) => selectTeams(state))
@@ -49,8 +39,11 @@ const Teams = () => {
     if (!members) dispatch(getMembers())
   }, [members])
 
-  const handleSubmit = (formData) => {
-    dispatch(createTeam(formData))
+  const handleSubmit = (formData, { props, resetForm, setSubmitting }) => {
+    //dispatch(createTeam(formData))
+    console.log(formData)
+    setSubmitting(false)
+    resetForm()
   }
 
   const handleDelete = (id) => {
@@ -58,7 +51,7 @@ const Teams = () => {
   }
 
   const renderTeamTables = (teams) => {
-    return teams?.map((team, i) => (
+    return teams?.map((team) => (
       <Table
         key={team.id}
         name={team.name}
@@ -109,54 +102,41 @@ const Teams = () => {
     <Container>
       <Row>
         <Col sm={4}>
-          <Form
-            value={form}
-            schema={schema}
-            onChange={setForm}
+          <Formik
+            initialValues={{ name: '', members: [] }}
             onSubmit={handleSubmit}
-            defaultValue={schema.default()}
+            validationSchema={schema}
           >
-            <>
-              Add Team
-              <FormGroup className='mb-3' controlId='formBasicEmail'>
-                <label style={{ display: 'block' }}>Name:</label>
-                <Form.Field className='form-label' name='name' />
-              </FormGroup>
-              <FormGroup className='mb-3' controlId='formBasicPassword'>
-                <label>
-                  Year:
-                  <Form.Field
-                    name='year'
-                    as={DatePicker}
-                    valueFormat={{ year: 'numeric' }}
-                    calendarProps={{ views: ['decade'] }}
-                  />
-                </label>
-              </FormGroup>
-              Members
-              <FormGroup className='mb-3' controlId='formBasicPassword'>
-                <label>
-                  <Form.Field
-                    name='members'
-                    as={Multiselect}
-                    data={members}
-                    dataKey='id'
-                    textField='name'
-                  />
-                </label>
-              </FormGroup>
-              {Object.keys(schema?.fields).map((field, index) => {
-                return (
-                  <div key={index}>
-                    <Form.Message for={[field]} className='error' />
-                  </div>
-                )
-              })}
-              <Button style={{ marginBottom: '2em' }} type='submit'>
-                Submit
-              </Button>
-            </>
-          </Form>
+            {({ errors, touched, setFieldValue }) => (
+              <Form>
+                <Container>
+                  <Col>
+                    <Field
+                      name='name'
+                      component={TextField}
+                      label='Name'
+                      title='Name'
+                    />{' '}
+                    <Field
+                      name='members'
+                      multiple
+                      component={Select}
+                      label='Name'
+                    >
+                      {members?.map((m) => (
+                        <MenuItem key={m.id} value={m}>
+                          {m.name}{' '}
+                        </MenuItem>
+                      ))}
+                    </Field>
+                  </Col>
+                </Container>
+                <Button type='submit' color='primary'>
+                  Submit
+                </Button>{' '}
+              </Form>
+            )}
+          </Formik>
         </Col>
         <Col sm={8}>
           {teams && teams.length > 0 ? (

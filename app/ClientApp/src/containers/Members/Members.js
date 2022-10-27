@@ -1,18 +1,10 @@
 import { useState, useEffect } from 'react'
-import {
-  Container,
-  Col,
-  Row,
-  Image,
-  FormGroup,
-  Button,
-  Table
-} from 'react-bootstrap'
-import { DropdownList } from 'react-widgets'
+import { Container, Col, Row, Image, Button, Table } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
-import Form from 'react-formal'
 import * as yup from 'yup'
-
+import { Field, Form, Formik } from 'formik'
+import { TextField, Autocomplete } from 'formik-mui'
+import MuiTextField from '@mui/material/TextField'
 import { COUNTRY_LIST } from './constants'
 import Charts from '../../components/Charts/Charts'
 import FormTabs from '../../components/FormTabs/FormTabs'
@@ -30,8 +22,11 @@ import { DeleteButton } from '../../components/Buttons/buttons'
 
 const createSchema = () => {
   return yup.object({
-    name: yup.string().required(),
-    nationality: yup.string().required()
+    name: yup.string().required('Name is a required field'),
+    nationality: yup
+      .string()
+      .typeError('Nationality is required field')
+      .required('Nationality is required field')
   })
 }
 
@@ -41,7 +36,6 @@ const Members = () => {
   const points = useSelector((state) => selectPoints(state))
 
   const schema = createSchema()
-  const [form, setForm] = useState()
 
   useEffect(() => {
     if (!members) dispatch(getMembers())
@@ -51,7 +45,10 @@ const Members = () => {
     if (!points) dispatch(getPoints())
   }, [points])
 
-  const handleSubmit = async (formData) => {
+  const handleSubmit = async (
+    formData,
+    { props, resetForm, setSubmitting }
+  ) => {
     try {
       const res = await restCountriesService.get(formData)
       const { svg } = res.data[0].flags
@@ -60,57 +57,63 @@ const Members = () => {
     } catch (e) {
       const newMember = { ...formData, flag: '' }
       dispatch(createMember(newMember))
-      console.warn(e)
     }
-    setForm({})
+    setSubmitting(false)
+    resetForm()
   }
 
   const handleDelete = (id) => {
     dispatch(deleteMember(id))
   }
-
   return (
     <Container>
       <Row>
         <Col sm={4}>
-          <Form
-            value={form}
-            schema={schema}
-            onChange={setForm}
+          <Formik
+            initialValues={{ name: '', nationality: '' }}
             onSubmit={handleSubmit}
-            defaultValue={schema.default()}
+            validationSchema={schema}
           >
-            <>
-              Add Member
-              <FormGroup className='mb-3' controlId='formBasicEmail'>
-                <label style={{ display: 'block' }}>Name:</label>
-                <Form.Field className='form-label' name='name' />
-              </FormGroup>
-              <FormGroup className='mb-3' controlId='formBasicEmail'>
-                <label style={{ display: 'block' }}>Nationality:</label>
-                <Form.Field
-                  as={DropdownList}
-                  data={COUNTRY_LIST}
-                  name='nationality'
-                  renderListItem={({ item }) =>
-                    item.charAt(0).toUpperCase() + item.slice(1)
-                  }
-                />
-              </FormGroup>
-              <div style={{ paddingBottom: '1em' }}>
-                {Object.keys(schema?.fields).map((field, index) => {
-                  return (
-                    <div key={index}>
-                      <Form.Message for={[field]} className='form-errors' />
-                    </div>
-                  )
-                })}
-              </div>
-              <Button style={{ marginBottom: '2em' }} type='submit'>
-                Submit
-              </Button>
-            </>
-          </Form>
+            {({ errors, touched }) => (
+              <Form>
+                <Container>
+                  <Col>
+                    <Field
+                      name='name'
+                      component={TextField}
+                      label='Name'
+                      title='Name'
+                    />
+                    <Field
+                      name='nationality'
+                      multiple={false}
+                      component={Autocomplete}
+                      options={COUNTRY_LIST}
+                      getOptionLabel={(option) => option}
+                      style={{ width: 300 }}
+                      renderInput={(params) => (
+                        <MuiTextField
+                          {...params}
+                          name='nationality'
+                          error={
+                            touched['nationality'] && !!errors['nationality']
+                          }
+                          helperText={
+                            touched['nationality'] && errors['nationality']
+                          }
+                          label='Nationality'
+                          variant='outlined'
+                        />
+                      )}
+                    />
+                  </Col>
+                </Container>
+                <Button type='submit' color='primary'>
+                  Submit
+                </Button>{' '}
+              </Form>
+            )}
+          </Formik>
         </Col>
         <Col sm={8}>
           <FormTabs

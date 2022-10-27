@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Container, Col, FormGroup, Row } from 'react-bootstrap'
+import { Container, FormGroup } from 'react-bootstrap'
 import * as yup from 'yup'
 import Form from 'react-formal'
 
