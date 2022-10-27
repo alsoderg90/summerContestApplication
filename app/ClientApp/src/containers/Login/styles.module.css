@@ -1,35 +1,8 @@
-.AuthFormContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100vw;
-  height: 100vh;
-}
-
-.AuthForm {
-  width: 420px;
-  box-shadow: rgb(0 0 0 / 16%) 1px 1px 10px;
-  padding-top: 30px;
-  padding-bottom: 20px;
-  border-radius: 8px;
-  background-color: white;
-}
-
-.AuthFormContent {
-  padding-left: 12%;
-  padding-right: 12%;
-}
-
-.AuthFormTitle {
-  text-align: center;
-  margin-bottom: 1em;
-  font-size: 24px;
-  color: rgb(34, 34, 34);
-  font-weight: 800;
-}
-
-.AuthFormLabel {
-  font-size: 14px;
-  font-weight: 600;
-  color: rgb(34, 34, 34);
+.loginPageStyle {
+  margin: 32px auto 37px;
+  max-width: 530px;
+  background: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px 10px rgba(0, 0, 0, 0.15);
 }

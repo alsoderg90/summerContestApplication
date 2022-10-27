@@ -1,14 +1,14 @@
-import { useState } from 'react'
-import { Container, FormGroup } from 'react-bootstrap'
+import React, { useState } from 'react'
+import { Container, FormGroup, Button } from 'react-bootstrap'
+import { Formik, Form, Field } from 'formik'
+import { TextField } from 'formik-mui'
 import * as yup from 'yup'
-import Form from 'react-formal'
-
 import styles from './styles.module.css'
 import axios from 'axios'
 
 const createSchema = () => {
   return yup.object({
-    email: yup.string().email().required(),
+    email: yup.string().email().required().email(),
     password: yup.string().required().min(6)
   })
 }
@@ -18,53 +18,43 @@ const Login = () => {
   const [form, setForm] = useState()
 
   const handleSubmit = (formData) => {
-    axios.get('/members').then((res) => console.log(res))
+    //axios.get('/members').then((res) => console.log(res))
     alert(JSON.stringify(formData, null, 2))
   }
 
   return (
-    <Container className={styles.AuthFormContainer}>
-      <Form
-        className={styles.AuthForm}
-        value={form}
-        schema={schema}
-        onChange={setForm}
-        onSubmit={handleSubmit}
-      >
-        <div className={styles.AuthFormContent}>
-          <h3 className={styles.AuthFormTitle}>Sign In</h3>
-          <FormGroup className='mt-3'>
-            <label>Email address</label>
-            <Form.Field
-              name='email'
-              className='form-control mt-1'
-              placeholder='Enter email'
-            />
-          </FormGroup>
-          <FormGroup className='mt-3'>
-            <label className={styles.AuthFormLabel}>Password</label>
-            <Form.Field
-              name='password'
-              type='password'
-              className='form-control mt-1'
-              placeholder='Enter password'
-            />
-          </FormGroup>
-          <div className='d-grid gap-2 mt-3'>
-            <Form.Submit type='submit' className='btn btn-primary'>
-              Submit
-            </Form.Submit>
-          </div>
-          {Object.keys(schema?.fields).map((field, index) => {
-            return (
-              <div key={index}>
-                <Form.Message for={[field]} className='error' />
+    <React.Fragment>
+      <Container>
+        <div className={`login-wrapper ${styles.loginPageStyle}`}>
+          <h2>Login Page</h2>
+          <Formik
+            initialValues={{ email: '', password: '' }}
+            onSubmit={handleSubmit}
+            validationSchema={schema}
+          >
+            <Form>
+              <div className='form-group'>
+                <Field name='email' component={TextField} label='Email' />
               </div>
-            )
-          })}
+              <div className='form-group'>
+                <Field
+                  component={TextField}
+                  type='password'
+                  name='password'
+                  label='Password'
+                />
+              </div>
+              <div>
+                <Button variant='success' type='submit'>
+                  Login
+                </Button>
+              </div>
+            </Form>
+          </Formik>
         </div>
-      </Form>
-    </Container>
+      </Container>
+    </React.Fragment>
   )
 }
+
 export default Login

@@ -30,15 +30,13 @@ const NavigationBar = () => {
                   <Nav.Link> Teams</Nav.Link>
                 </LinkContainer>
               </NavDropdown.Item>
+              <NavDropdown.Divider />
               <NavDropdown.Item as='div'>
                 <LinkContainer to='/dashboard/settings'>
                   <Nav.Link> Settings</Nav.Link>
                 </LinkContainer>
               </NavDropdown.Item>
             </NavDropdown>
-            <LinkContainer to='/login'>
-              <Nav.Link>Login</Nav.Link>
-            </LinkContainer>
           </Nav>
         </Navbar.Collapse>
       </Container>

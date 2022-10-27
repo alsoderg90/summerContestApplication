@@ -20,6 +20,8 @@ import { selectMembers } from '../../redux/modules/members/selectors'
 import { selectPoints } from '../../redux/modules/points/selectors'
 import { DeleteButton } from '../../components/Buttons/buttons'
 
+import styles from './styles.module.css'
+
 const createSchema = () => {
   return yup.object({
     name: yup.string().required('Name is a required field'),
@@ -68,53 +70,6 @@ const Members = () => {
   return (
     <Container>
       <Row>
-        <Col sm={4}>
-          <Formik
-            initialValues={{ name: '', nationality: '' }}
-            onSubmit={handleSubmit}
-            validationSchema={schema}
-          >
-            {({ errors, touched }) => (
-              <Form>
-                <Container>
-                  <Col>
-                    <Field
-                      name='name'
-                      component={TextField}
-                      label='Name'
-                      title='Name'
-                    />
-                    <Field
-                      name='nationality'
-                      multiple={false}
-                      component={Autocomplete}
-                      options={COUNTRY_LIST}
-                      getOptionLabel={(option) => option}
-                      style={{ width: 300 }}
-                      renderInput={(params) => (
-                        <MuiTextField
-                          {...params}
-                          name='nationality'
-                          error={
-                            touched['nationality'] && !!errors['nationality']
-                          }
-                          helperText={
-                            touched['nationality'] && errors['nationality']
-                          }
-                          label='Nationality'
-                          variant='outlined'
-                        />
-                      )}
-                    />
-                  </Col>
-                </Container>
-                <Button type='submit' color='primary'>
-                  Submit
-                </Button>{' '}
-              </Form>
-            )}
-          </Formik>
-        </Col>
         <Col sm={8}>
           <FormTabs
             tabs={[
@@ -149,7 +104,60 @@ const Members = () => {
                   ))}
                 </tbody>
               </Table>,
-              <Charts key='Charts' name='Charts' data={members}></Charts>
+              <Charts key='Charts' name='Charts' data={members}></Charts>,
+              <Col sm={4} key='Form' name='Form'>
+                <Formik
+                  initialValues={{ name: '', nationality: '' }}
+                  onSubmit={handleSubmit}
+                  validationSchema={schema}
+                >
+                  {({ errors, touched }) => (
+                    <Form>
+                      <Container>
+                        <Col>
+                          <Field
+                            name='name'
+                            component={TextField}
+                            label='Name'
+                            title='Name'
+                          />
+                        </Col>
+                        <Col className={styles.formField}>
+                          <Field
+                            name='nationality'
+                            multiple={false}
+                            component={Autocomplete}
+                            options={COUNTRY_LIST}
+                            getOptionLabel={(option) => option}
+                            style={{ width: 300 }}
+                            renderInput={(params) => (
+                              <MuiTextField
+                                {...params}
+                                name='nationality'
+                                error={
+                                  touched['nationality'] &&
+                                  !!errors['nationality']
+                                }
+                                helperText={
+                                  touched['nationality'] &&
+                                  errors['nationality']
+                                }
+                                label='Nationality'
+                                variant='outlined'
+                              />
+                            )}
+                          />
+                        </Col>
+                        <Col styles={{ marginBottom: '1em' }}>
+                          <Button type='submit' variant='success'>
+                            Submit
+                          </Button>{' '}
+                        </Col>
+                      </Container>
+                    </Form>
+                  )}
+                </Formik>
+              </Col>
             ]}
           ></FormTabs>
         </Col>

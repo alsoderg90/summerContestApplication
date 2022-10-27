@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { Container, Button, Col, Row, Table, Image } from 'react-bootstrap'
 import { Field, Form, Formik } from 'formik'
 import { TextField, Select } from 'formik-mui'
-import { MenuItem } from '@mui/material'
+import { MenuItem, FormControl } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import { DeleteButton } from '../../components/Buttons/buttons'
 import * as yup from 'yup'
@@ -40,8 +40,7 @@ const Teams = () => {
   }, [members])
 
   const handleSubmit = (formData, { props, resetForm, setSubmitting }) => {
-    //dispatch(createTeam(formData))
-    console.log(formData)
+    dispatch(createTeam(formData))
     setSubmitting(false)
     resetForm()
   }
@@ -74,7 +73,7 @@ const Teams = () => {
           <tr>
             <th>Name</th>
             <th>Nationality</th>
-            <th>Points</th>
+            <th colSpan={2}>Points</th>
           </tr>
         </thead>
         <tbody>
@@ -100,52 +99,70 @@ const Teams = () => {
 
   return (
     <Container>
-      <Row>
-        <Col sm={4}>
-          <Formik
-            initialValues={{ name: '', members: [] }}
-            onSubmit={handleSubmit}
-            validationSchema={schema}
-          >
-            {({ errors, touched, setFieldValue }) => (
-              <Form>
-                <Container>
-                  <Col>
-                    <Field
-                      name='name'
-                      component={TextField}
-                      label='Name'
-                      title='Name'
-                    />{' '}
-                    <Field
-                      name='members'
-                      multiple
-                      component={Select}
-                      label='Name'
-                    >
-                      {members?.map((m) => (
-                        <MenuItem key={m.id} value={m}>
-                          {m.name}{' '}
-                        </MenuItem>
-                      ))}
-                    </Field>
-                  </Col>
-                </Container>
-                <Button type='submit' color='primary'>
-                  Submit
-                </Button>{' '}
-              </Form>
-            )}
-          </Formik>
-        </Col>
-        <Col sm={8}>
-          {teams && teams.length > 0 ? (
-            <FormTabs tabs={renderTeamTables(teams)}></FormTabs>
-          ) : (
-            <></>
-          )}
-        </Col>
-      </Row>
+      <FormTabs
+        tabs={[
+          <div key='Form' name='Form'>
+            <Formik
+              initialValues={{ name: '', members: [] }}
+              onSubmit={handleSubmit}
+              validationSchema={schema}
+            >
+              {({ errors, touched, setFieldValue }) => (
+                <Form>
+                  <Container>
+                    <Row>
+                      <Col>
+                        <FormControl fullWidth>
+                          <Field
+                            name='name'
+                            component={TextField}
+                            label='Name'
+                            title='Name'
+                          />{' '}
+                        </FormControl>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col style={{ marginBottom: '1em' }}>
+                        <FormControl fullWidth>
+                          <Field
+                            name='members'
+                            multiple
+                            component={Select}
+                            label='Name'
+                          >
+                            {members?.map((m) => (
+                              <MenuItem key={m.id} value={m}>
+                                {m.name}{' '}
+                              </MenuItem>
+                            ))}
+                          </Field>
+                        </FormControl>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        <Button type='submit' variant='success'>
+                          Submit
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Container>
+                </Form>
+              )}
+            </Formik>
+          </div>,
+          <div key='teams' name='Teams'>
+            <Col sm={8}>
+              {teams && teams.length > 0 ? (
+                <FormTabs tabs={renderTeamTables(teams)}></FormTabs>
+              ) : (
+                <></>
+              )}
+            </Col>
+          </div>
+        ]}
+      ></FormTabs>
     </Container>
   )
 }
