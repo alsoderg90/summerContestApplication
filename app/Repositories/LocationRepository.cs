@@ -72,7 +72,9 @@ namespace app.Repositories
 
         public async Task<Location> Remove(int id)
         {
-            var checkpoint = await _context.Locations.FindAsync(id);
+            var checkpoint = await _context.Locations
+                .Include(l => l.Points)
+                .FirstOrDefaultAsync(l => l.Id == id);
             if (checkpoint == null)
             {
                 return null;

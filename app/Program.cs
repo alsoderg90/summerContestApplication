@@ -4,16 +4,22 @@ using System.Text.Json.Serialization;
 using app.Services;
 using app.Repositories;
 
+DotNetEnv.Env.Load();
+var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 
 builder.Services.AddControllers().AddJsonOptions(x =>
-                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.AddControllersWithViews();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddDbContext<DatabaseContext>(opt =>
-    opt.UseInMemoryDatabase("DatabaseContext"));
+{
+    opt.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+});
+    
+//builder.Services.AddDbContext<DatabaseContext>(opt =>
+//    opt.UseInMemoryDatabase("DatabaseContext"));
 
 //Services
 builder.Services.AddTransient<LocationService, LocationService>();

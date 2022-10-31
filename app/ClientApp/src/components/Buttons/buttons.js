@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Modal, Button } from 'react-bootstrap'
 import { BsFillTrashFill } from 'react-icons/bs'
+import { BiRefresh } from 'react-icons/bi'
 import PropTypes from 'prop-types'
 
 export const DeleteButton = ({ onClick, ...rest }) => {
@@ -44,4 +45,12 @@ DeleteButton.propTypes = {
   handleClose: PropTypes.func,
   onClick: PropTypes.func,
   showModal: PropTypes.func
+}
+
+export const RefreshButton = () => {
+  return (
+    <Button onClick={() => window.location.reload(false)}>
+      Refresh <BiRefresh size={25}></BiRefresh>
+    </Button>
+  )
 }

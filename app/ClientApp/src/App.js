@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import { useLocation } from 'react-router'
 import { ErrorBoundary } from 'react-error-boundary'
 import NavigationBar from './components/NavigationBar/NavigationBar'
-import JsErrorComponent from './components/ErrorComponent/ErrorComponent'
+import { JsErrorComponent } from './components/ErrorComponent/ErrorComponent'
 import AppRoutes from './AppRoutes'
 import './styles/App.scss'
 

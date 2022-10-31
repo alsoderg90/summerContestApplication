@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using app.Models;
 using app.Extensions;
 using app.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace app.Controllers
 {
@@ -70,9 +66,15 @@ namespace app.Controllers
         {
             if (ModelState.IsValid)
             {
-                var createdMember = await _memberService.Create(member);
-                return Ok(createdMember);
-            }
+                try
+                {
+                    var createdMember = await _memberService.Create(member);
+                    return Ok(createdMember);
+                } catch (DbUpdateException)
+                {
+                    return BadRequest($"{member.Name} is already added");
+                }
+        }
             var errors = ModelState.GetErrors;
             return BadRequest(new { errors });
         }

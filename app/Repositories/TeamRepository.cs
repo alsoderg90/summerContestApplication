@@ -62,7 +62,10 @@ namespace app.Repositories
 
         public async Task<Team> Remove(int id)
         {
-            var team = await _context.Teams.FindAsync(id);
+            var team = await _context.Teams
+                .Include(t => t.Members)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
             if (team == null)
             {
                 return null;

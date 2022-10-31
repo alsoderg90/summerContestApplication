@@ -16,9 +16,13 @@ import {
 } from '../../redux/modules/members/actions'
 import { getPoints } from '../../redux/modules/points/actions'
 import { getUserPoints } from '../../utils/functions'
-import { selectMembers } from '../../redux/modules/members/selectors'
+import {
+  selectMembers,
+  selectMembersError
+} from '../../redux/modules/members/selectors'
 import { selectPoints } from '../../redux/modules/points/selectors'
 import { DeleteButton } from '../../components/Buttons/buttons'
+import ErrorComponent from '../../components/ErrorComponent/ErrorComponent'
 
 import styles from './styles.module.css'
 
@@ -36,6 +40,7 @@ const Members = () => {
   const dispatch = useDispatch()
   const members = useSelector((state) => selectMembers(state))
   const points = useSelector((state) => selectPoints(state))
+  const errors = useSelector((state) => selectMembersError(state))
 
   const schema = createSchema()
 
@@ -67,6 +72,11 @@ const Members = () => {
   const handleDelete = (id) => {
     dispatch(deleteMember(id))
   }
+
+  if (errors) {
+    return <ErrorComponent {...errors}></ErrorComponent>
+  }
+
   return (
     <Container>
       <Row>

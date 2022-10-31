@@ -1,6 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Utilities.IO;
-using System.Drawing;
+﻿using EntityFramework.Exceptions.MySQL;
+using Microsoft.EntityFrameworkCore;
 
 namespace app.Models
 {
@@ -8,6 +7,10 @@ namespace app.Models
     {
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
         {
+        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseExceptionProcessor();
         }
         public DbSet<Location> Locations { get; set; } = null!;
         public DbSet<Member> Members { get; set; } = null!;
@@ -20,8 +23,20 @@ namespace app.Models
             modelBuilder.Entity<Member>()
                 .HasKey(m => m.Id);
             modelBuilder.Entity<Member>()
+                .HasIndex(m => m.Name)
+                .IsUnique();
+            modelBuilder.Entity<Member>()
                 .HasOne(m => m.Team)
-                .WithMany(t => t.Members);
+                .WithMany(t => t.Members)
+                .IsRequired(false);
+            modelBuilder.Entity<Location>()
+                .HasMany(l => l.Points)
+                .WithOne(p => p.Location)
+                .OnDelete(DeleteBehavior.ClientCascade);
+            modelBuilder.Entity<Team>()
+                .HasMany(t => t.Members)
+                .WithOne(m => m.Team)
+                .IsRequired(false);
             modelBuilder.Entity<Point>()
                 .HasKey(Lm => new { Lm.MemberId, Lm.LocationId});
             modelBuilder.Entity<Point>()

@@ -13,9 +13,7 @@ import {
 const initialState = {
   members: undefined,
   loadingMembers: false,
-  error: {
-    message: ''
-  }
+  error: undefined
 }
 
 /* eslint-disable indent */
@@ -24,28 +22,45 @@ const memberReducer = (state = initialState, action) => {
     case DELETE_MEMBER_ACTION:
     case CREATE_MEMBER_ACTION:
     case GET_MEMBERS_ACTION:
-      state = { ...state, loadingMembers: true }
+      state = {
+        ...state,
+        loadingMembers: true,
+        error: undefined
+      }
       break
     case DELETE_MEMBER_ERROR:
     case CREATE_MEMBER_ERROR:
-    case GET_MEMBERS_ERROR:
-      state = { ...state, error: { message: 'Error' }, loadingMembers: false }
+    case GET_MEMBERS_ERROR: {
+      const { data, status } = action.payload.response
+      state = {
+        ...state,
+        error: { message: data, status },
+        loadingMembers: false
+      }
       break
+    }
     case GET_MEMBERS_SUCCESS:
-      state = { ...state, members: action.payload, loadingMembers: false }
+      state = {
+        ...state,
+        members: action.payload,
+        loadingMembers: false,
+        error: undefined
+      }
       break
     case CREATE_MEMBER_SUCCESS:
       state = {
         ...state,
         members: state.members.concat(action.payload),
-        loadingMembers: false
+        loadingMembers: false,
+        error: undefined
       }
       break
     case DELETE_MEMBER_SUCCESS:
       state = {
         ...state,
         members: state.members.filter((member) => member.id !== action.payload),
-        loadingMembers: false
+        loadingMembers: false,
+        error: undefined
       }
       break
     default:

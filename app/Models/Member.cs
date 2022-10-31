@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.Net.Mail;
 using System.Security.Policy;
 
 namespace app.Models
@@ -14,7 +15,7 @@ namespace app.Models
         public string? Nationality { get; set; }
         public string? FlagUrl { get; set; }
         public List<Point>? Points { get; set; }
-        public int TeamId { get; set; }
-        public Team? Team { get; set; }
+        public int? TeamId { get; set; } = null!;
+        public Team? Team { get; set; } = null!;
     }
 }
