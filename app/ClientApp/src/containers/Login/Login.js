@@ -5,7 +5,7 @@ import { Formik, Form, Field } from 'formik'
 import { TextField } from 'formik-mui'
 import * as yup from 'yup'
 import styles from './styles.module.css'
-import { login } from '../../redux/modules/login/actions'
+import { login } from 'redux/modules/login/actions'
 
 const createSchema = () => {
   return yup.object({

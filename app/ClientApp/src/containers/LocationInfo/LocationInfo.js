@@ -6,14 +6,11 @@ import { TextField, Select } from 'formik-mui'
 import { MenuItem, FormControl } from '@mui/material'
 import * as yup from 'yup'
 import { useDispatch, useSelector } from 'react-redux'
-import { DeleteButton } from '../../components/Buttons/buttons'
-import { selectLocations } from '../../redux/modules/locations/selectors'
-import { selectMembers } from '../../redux/modules/members/selectors'
-import {
-  createLocation,
-  deleteLocation
-} from '../../redux/modules/locations/actions'
-import { getMembers } from '../../redux/modules/members/actions'
+import { DeleteButton } from 'components/Buttons/buttons'
+import { selectLocations } from 'redux/modules/locations/selectors'
+import { selectMembers } from 'redux/modules/members/selectors'
+import { createLocation, deleteLocation } from 'redux/modules/locations/actions'
+import { getMembers } from 'redux/modules/members/actions'
 import styles from './styles.module.css'
 const emptyMember = { memberId: '', points: 0 }
 

@@ -6,8 +6,8 @@ import { Container, Col, Row } from 'react-bootstrap'
 import {
   selectNewLocation,
   selectSelectedLocation
-} from '../../redux/modules/locations/selectors'
-import LocationInfo from '../../containers/LocationInfo/LocationInfo'
+} from 'redux/modules/locations/selectors'
+import LocationInfo from 'containers/LocationInfo/LocationInfo'
 
 const FrontPage = () => {
   const newLocation = useSelector((state) => selectNewLocation(state))

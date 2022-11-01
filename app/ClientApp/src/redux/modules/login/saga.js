@@ -1,7 +1,7 @@
 import { takeLatest, put, call } from 'redux-saga/effects'
 import { LOGIN_ACTION } from './constants'
-import { login as adminLogin } from '../../../api/login'
-import { setToken, setUser } from '../../../api/api_helper'
+import { login as adminLogin } from 'api/login'
+import { setToken, setUser } from 'api/api_helper'
 
 import { loginError, loginSuccess } from './actions'
 

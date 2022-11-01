@@ -1,11 +1,10 @@
 import { takeLatest, put, call } from 'redux-saga/effects'
+import { getTeams, createTeam, deleteTeam } from 'api/teams'
 import {
   GET_TEAMS_ACTION,
   CREATE_TEAM_ACTION,
   DELETE_TEAM_ACTION
 } from './constants'
-import { getTeams, createTeam, deleteTeam } from '../../../api/teams'
-
 import {
   getTeamsError,
   getTeamsSuccess,

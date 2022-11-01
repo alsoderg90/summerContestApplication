@@ -6,23 +6,23 @@ import { Field, Form, Formik } from 'formik'
 import { TextField, Autocomplete } from 'formik-mui'
 import MuiTextField from '@mui/material/TextField'
 import { COUNTRY_LIST } from './constants'
-import Charts from '../../components/Charts/Charts'
-import FormTabs from '../../components/FormTabs/FormTabs'
-import restCountriesService from '../../api/restcountries'
+import Charts from 'components/Charts/Charts'
+import FormTabs from 'components/FormTabs/FormTabs'
+import restCountriesService from 'api/restcountries'
 import {
   getMembers,
   createMember,
   deleteMember
-} from '../../redux/modules/members/actions'
-import { getPoints } from '../../redux/modules/points/actions'
-import { getUserPoints } from '../../utils/functions'
+} from 'redux/modules/members/actions'
+import { getPoints } from 'redux/modules/points/actions'
+import { getUserPoints } from 'utils/functions'
 import {
   selectMembers,
   selectMembersError
-} from '../../redux/modules/members/selectors'
-import { selectPoints } from '../../redux/modules/points/selectors'
-import { DeleteButton } from '../../components/Buttons/buttons'
-import ErrorComponent from '../../components/ErrorComponent/ErrorComponent'
+} from 'redux/modules/members/selectors'
+import { selectPoints } from 'redux/modules/points/selectors'
+import { DeleteButton } from 'components/Buttons/buttons'
+import ErrorComponent from 'components/ErrorComponent/ErrorComponent'
 
 import styles from './styles.module.css'
 

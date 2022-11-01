@@ -4,18 +4,14 @@ import { Field, Form, Formik } from 'formik'
 import { TextField, Select } from 'formik-mui'
 import { MenuItem, FormControl } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
-import { DeleteButton } from '../../components/Buttons/buttons'
+import { DeleteButton } from 'components/Buttons/buttons'
 import * as yup from 'yup'
-import FormTabs from '../../components/FormTabs/FormTabs'
-import { getMembers } from '../../redux/modules/members/actions'
-import { selectMembers } from '../../redux/modules/members/selectors'
-import {
-  getTeams,
-  createTeam,
-  deleteTeam
-} from '../../redux/modules/teams/actions'
-import { selectTeams } from '../../redux/modules/teams/selectors'
-import { getUserPoints, getTeamPoints } from '../../utils/functions'
+import FormTabs from 'components/FormTabs/FormTabs'
+import { getMembers } from 'redux/modules/members/actions'
+import { selectMembers } from 'redux/modules/members/selectors'
+import { getTeams, createTeam, deleteTeam } from 'redux/modules/teams/actions'
+import { selectTeams } from 'redux/modules/teams/selectors'
+import { getUserPoints, getTeamPoints } from 'utils/functions'
 
 const createSchema = () => {
   return yup.object({

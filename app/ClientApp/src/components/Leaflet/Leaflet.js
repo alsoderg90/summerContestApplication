@@ -14,13 +14,13 @@ import {
   getLocations,
   setNewLocation,
   setSelectedLocation
-} from '../../redux/modules/locations/actions'
+} from 'redux/modules/locations/actions'
 import {
   selectLocations,
   selectNewLocation
-} from '../../redux/modules/locations/selectors'
-import marker from '../../assets/marker-icon-2x-green.png'
-import markerShadow from '../../assets/marker-shadow.png'
+} from 'redux/modules/locations/selectors'
+import marker from 'assets/marker-icon-2x-green.png'
+import markerShadow from 'assets/marker-shadow.png'
 
 const greenIcon = L.icon({
   iconUrl: marker,

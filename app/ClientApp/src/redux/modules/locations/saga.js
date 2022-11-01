@@ -4,12 +4,7 @@ import {
   CREATE_LOCATION_ACTION,
   DELETE_LOCATION_ACTION
 } from './constants'
-import {
-  getLocations,
-  createLocation,
-  deleteLocation
-} from '../../../api/locations'
-
+import { getLocations, createLocation, deleteLocation } from 'api/locations'
 import {
   getLocationsError,
   getLocationsSuccess,

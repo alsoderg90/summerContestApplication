@@ -1,11 +1,10 @@
 import { takeLatest, put, call } from 'redux-saga/effects'
+import { getMembers, createMember, deleteMember } from 'api/members'
 import {
   GET_MEMBERS_ACTION,
   CREATE_MEMBER_ACTION,
   DELETE_MEMBER_ACTION
 } from './constants'
-import { getMembers, createMember, deleteMember } from '../../../api/members'
-
 import {
   getMembersError,
   getMembersSuccess,

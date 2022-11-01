@@ -1,7 +1,6 @@
 import { takeLatest, put, call } from 'redux-saga/effects'
 import { GET_POINTS_ACTION } from './constants'
-import { getPoints } from '../../../api/points'
-
+import { getPoints } from 'api/points'
 import { getPointsError, getPointsSuccess } from './actions'
 
 function* onGetPoints() {

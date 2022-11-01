@@ -16,7 +16,7 @@ import {
   ResponsiveContainer
 } from 'recharts'
 
-import { getUserPoints } from '../../utils/functions'
+import { getUserPoints } from 'utils/functions'
 
 const colors = ['#1f77b4', '#ff7f0e', '#2ca02c']
 
