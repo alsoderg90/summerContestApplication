@@ -1,4 +1,9 @@
-import { LOGIN_ACTION, LOGIN_ERROR, LOGIN_SUCCESS } from './constants'
+import {
+  LOGIN_ACTION,
+  LOGIN_ERROR,
+  LOGIN_SUCCESS,
+  LOGOUT_ACTION
+} from './constants'
 
 const initialState = {
   user: undefined,
@@ -26,10 +31,17 @@ const loginReducer = (state = initialState, action) => {
       break
     }
     case LOGIN_SUCCESS:
-      console.log(action)
       state = {
         ...state,
         user: action.payload,
+        loading: false,
+        error: undefined
+      }
+      break
+    case LOGOUT_ACTION:
+      state = {
+        ...state,
+        user: undefined,
         loading: false,
         error: undefined
       }

@@ -45,51 +45,44 @@ const Teams = () => {
     dispatch(deleteTeam(id))
   }
 
-  const renderTeamTables = (teams) => {
+  const renderTeams = (teams) => {
     return teams?.map((team) => (
-      <Table
-        key={team.id}
-        name={team.name}
-        striped
-        bordered
-        hover
-        style={{ marginTop: '2em' }}
-      >
-        <thead>
-          <tr>
-            <th colSpan={2}>{team.name.toUpperCase()} </th>
-            <th colSpan={1}> {getTeamPoints(team.members)}</th>
-            <th colSpan={1}>
-              {' '}
-              <DeleteButton
-                onClick={() => handleDelete(team.id)}
-              ></DeleteButton>
-            </th>
-          </tr>
-          <tr>
-            <th>Name</th>
-            <th>Nationality</th>
-            <th colSpan={2}>Points</th>
-          </tr>
-        </thead>
-        <tbody>
-          {team.members?.map((member, j) => (
-            <tr key={j}>
-              <td>{member.name}</td>
-              <td>
-                <Image
-                  alt={member.nationality}
-                  width={100}
-                  height={40}
-                  src={member.flagUrl}
-                ></Image>
-              </td>
-              <td>{getUserPoints(member.points, member.id)}</td>
-              <td></td>
+      <div key={team.id} name={team.name}>
+        {/* <th colSpan={2}>{team.name.toUpperCase()} </th>
+        <th colSpan={1}> {getTeamPoints(team.members)}</th>
+        <th colSpan={1}>
+          {' '}
+        </th> */}
+        <h5>{`Points: ${getTeamPoints(team.members)}`}</h5>
+        <h5>Members:</h5>
+        <Table striped bordered hover style={{ marginTop: '1em' }}>
+          <thead>
+            <tr></tr>
+            <tr>
+              <th>Name</th>
+              <th>Nationality</th>
+              <th>Points</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {team.members?.map((member, j) => (
+              <tr key={j}>
+                <td>{member.name}</td>
+                <td>
+                  <Image
+                    alt={member.nationality}
+                    width={100}
+                    height={40}
+                    src={member.flagUrl}
+                  ></Image>
+                </td>
+                <td>{getUserPoints(member.points, member.id)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+        <DeleteButton onClick={() => handleDelete(team.id)}></DeleteButton>
+      </div>
     ))
   }
 
@@ -151,7 +144,7 @@ const Teams = () => {
           <div key='teams' name='Teams'>
             <Col sm={8}>
               {teams && teams.length > 0 ? (
-                <FormTabs tabs={renderTeamTables(teams)}></FormTabs>
+                <FormTabs tabs={renderTeams(teams)}></FormTabs>
               ) : (
                 <></>
               )}

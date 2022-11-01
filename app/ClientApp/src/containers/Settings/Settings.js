@@ -1,23 +1,32 @@
-import { useEffect, useState } from 'react'
 import Login from '../Login/Login'
+import { useDispatch, useSelector } from 'react-redux'
+import { selectError, selectUser } from 'redux/modules/login/selectors'
+import { logOut } from 'redux/modules/login/actions'
+import { Container, Button } from 'react-bootstrap'
+import ErrorComponent from 'components/ErrorComponent/ErrorComponent'
 
 const Settings = () => {
-  const [user, setUser] = useState(undefined)
-  useEffect(() => {
-    setUser(window.localStorage.getItem('user'))
-  }, [user])
+  const user = useSelector((state) => selectUser(state))
+  const error = useSelector((state) => selectError(state))
+  const dispatch = useDispatch()
 
   const handeLogOut = () => {
     window.localStorage.removeItem('user')
     window.localStorage.removeItem('token')
-    setUser(undefined)
+    dispatch(logOut())
+  }
+
+  if (error) {
+    return <ErrorComponent {...error}></ErrorComponent>
   }
 
   if (user) {
     return (
       <>
-        <h1>hello {user.email}</h1>
-        <button onClick={handeLogOut}>LogOut</button>
+        <Container>
+          <h1>Hello {user.email}</h1>
+          <Button onClick={handeLogOut}>LogOut</Button>
+        </Container>
       </>
     )
   } else return <Login></Login>

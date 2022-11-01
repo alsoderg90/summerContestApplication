@@ -1,4 +1,9 @@
-import { LOGIN_ACTION, LOGIN_ERROR, LOGIN_SUCCESS } from './constants'
+import {
+  LOGIN_ACTION,
+  LOGIN_ERROR,
+  LOGIN_SUCCESS,
+  LOGOUT_ACTION
+} from './constants'
 
 export const login = (formData) => {
   return {
@@ -18,5 +23,11 @@ export const loginError = (error) => {
   return {
     type: LOGIN_ERROR,
     payload: error
+  }
+}
+
+export const logOut = () => {
+  return {
+    type: LOGOUT_ACTION
   }
 }

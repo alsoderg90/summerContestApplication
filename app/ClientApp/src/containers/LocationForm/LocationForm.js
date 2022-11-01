@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Container, Alert, Row, Col, Button } from 'react-bootstrap'
 import PropTypes from 'prop-types'
 import { Field, FieldArray, Form, Formik } from 'formik'
@@ -36,7 +36,7 @@ const createSchema = () =>
     title: yup.string().required('Name is a required field')
   })
 
-const LocationInfo = ({ location }) => {
+const LocationForm = ({ location }) => {
   const locations = useSelector((state) => selectLocations(state))
   const selectableMembers = useSelector((state) => selectMembers(state))
   const dispatch = useDispatch()
@@ -184,8 +184,8 @@ const LocationInfo = ({ location }) => {
   )
 }
 
-LocationInfo.propTypes = {
+LocationForm.propTypes = {
   location: PropTypes.object
 }
 
-export default LocationInfo
+export default LocationForm

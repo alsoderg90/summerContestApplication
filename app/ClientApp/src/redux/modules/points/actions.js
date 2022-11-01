@@ -1,7 +1,8 @@
 import {
   GET_POINTS_ACTION,
   GET_POINTS_ERROR,
-  GET_POINTS_SUCCESS
+  GET_POINTS_SUCCESS,
+  SET_POINTS_SUCCESS
 } from './constants'
 
 export const getPoints = () => {
@@ -20,6 +21,13 @@ export const getPointsSuccess = (teams) => {
 export const getPointsError = (error) => {
   return {
     type: GET_POINTS_ERROR,
+    payload: error
+  }
+}
+
+export const setPointsSuccess = (error) => {
+  return {
+    type: SET_POINTS_SUCCESS,
     payload: error
   }
 }

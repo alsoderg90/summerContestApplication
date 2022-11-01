@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Container, Col, Row, Image, Button, Table } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import * as yup from 'yup'
@@ -104,7 +104,7 @@ const Members = () => {
                           src={member.flagUrl}
                         ></Image>
                       </td>
-                      <td>{getUserPoints(member.points, member.id)}</td>
+                      <td>{getUserPoints(points, member.id)}</td>
                       <td>
                         <DeleteButton
                           onClick={() => handleDelete(member.id)}
@@ -117,7 +117,7 @@ const Members = () => {
               <Charts key='Charts' name='Charts' data={members}></Charts>,
               <Col sm={4} key='Form' name='Form'>
                 <Formik
-                  initialValues={{ name: '', nationality: '' }}
+                  initialValues={{ name: '', nationality: 'Finland' }}
                   onSubmit={handleSubmit}
                   validationSchema={schema}
                 >

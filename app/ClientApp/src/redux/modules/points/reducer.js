@@ -1,14 +1,15 @@
 import {
   GET_POINTS_ACTION,
   GET_POINTS_ERROR,
-  GET_POINTS_SUCCESS
+  GET_POINTS_SUCCESS,
+  SET_POINTS_SUCCESS
 } from './constants'
 
 const initialState = {
   points: undefined,
   loadingPoints: false,
   error: {
-    message: ''
+    message: undefined
   }
 }
 
@@ -23,6 +24,14 @@ const pointReducer = (state = initialState, action) => {
       break
     case GET_POINTS_SUCCESS:
       state = { ...state, points: action.payload, loadingPoints: false }
+      break
+    case SET_POINTS_SUCCESS:
+      state = {
+        ...state,
+        points: !state.points
+          ? action.payload
+          : state.points.concat(action.payload)
+      }
       break
     default:
       state = { ...state }

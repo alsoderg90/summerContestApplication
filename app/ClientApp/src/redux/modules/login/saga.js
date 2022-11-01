@@ -9,10 +9,9 @@ function* login(auth) {
   const { payload } = auth
   try {
     const response = yield call(() => adminLogin(payload))
-    console.log(response)
-    yield put(loginSuccess(auth))
+    yield put(loginSuccess(payload))
     setToken(response)
-    setUser(auth.email)
+    setUser(payload.email)
   } catch (error) {
     yield put(loginError(error))
   }

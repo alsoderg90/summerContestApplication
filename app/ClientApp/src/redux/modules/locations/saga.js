@@ -1,10 +1,11 @@
 import { takeLatest, put, call } from 'redux-saga/effects'
+import { getLocations, createLocation, deleteLocation } from 'api/locations'
+import { setPointsSuccess } from '../points/actions'
 import {
   GET_LOCATIONS_ACTION,
   CREATE_LOCATION_ACTION,
   DELETE_LOCATION_ACTION
 } from './constants'
-import { getLocations, createLocation, deleteLocation } from 'api/locations'
 import {
   getLocationsError,
   getLocationsSuccess,
@@ -27,6 +28,7 @@ function* onCreateLocation({ newLocation }) {
   try {
     const response = yield call(() => createLocation(newLocation))
     yield put(createLocationSuccess(response))
+    yield put(setPointsSuccess(response.points))
   } catch (error) {
     yield put(createLocationError(error))
   }

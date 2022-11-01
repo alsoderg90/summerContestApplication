@@ -7,7 +7,8 @@ import {
   selectNewLocation,
   selectSelectedLocation
 } from 'redux/modules/locations/selectors'
-import LocationInfo from 'containers/LocationInfo/LocationInfo'
+import LocationForm from 'containers/LocationForm/LocationForm'
+import LocationInfo from 'components/LocationInfo/LocationInfo'
 
 const FrontPage = () => {
   const newLocation = useSelector((state) => selectNewLocation(state))
@@ -15,19 +16,30 @@ const FrontPage = () => {
   const [activeTab, setActiveTab] = useState('Locations')
 
   const tabs = [
-    <LocationInfo
+    <LocationForm
       key='Locations'
       location={newLocation ? newLocation : selectedLocation}
-      name='Locations'
-    ></LocationInfo>
+      name={`${newLocation ? 'Add' : 'Edit'} location`}
+    ></LocationForm>
   ]
+
+  if (selectedLocation) {
+    tabs.push(
+      <LocationInfo
+        name='Stats'
+        key='Stats'
+        location={selectedLocation}
+      ></LocationInfo>
+    )
+  }
 
   return (
     <Container>
       <Row>
-        <Col lg={true}>
+        <Col xl={8}>
           <Leaflet newLocation={newLocation} />
         </Col>
+        <p></p>
         <Col>
           <FormTabs tabs={tabs} activeTab={activeTab} />
         </Col>

@@ -29,15 +29,13 @@ const DefaultErrorComponent = ({ message, status }) => {
   const [show, setShow] = useState(true)
   const handleClose = () => setShow(false)
 
-  console.log(message, status)
-
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
         <Modal.Title>{`Error: ${status}`}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p>{message}</p>
+        <h2>{status == 401 ? 'Access denied' : message}</h2>
       </Modal.Body>
       <Modal.Footer>
         <RefreshButton></RefreshButton>
