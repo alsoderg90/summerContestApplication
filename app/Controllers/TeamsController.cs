@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using app.Models;
 using app.Services;
-using AutoMapper.Execution;
 using app.Extensions;
-using System.Diagnostics.Metrics;
+using Microsoft.AspNetCore.Authorization;
 
 namespace app.Controllers
 {
@@ -81,6 +74,7 @@ namespace app.Controllers
 
         // DELETE: api/Teams/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult<int>> DeleteTeam(int id)
         {
             var team = await _teamService.Delete(id);

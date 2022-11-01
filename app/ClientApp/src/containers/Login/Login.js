@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
-import { Container, FormGroup, Button } from 'react-bootstrap'
+import { useDispatch } from 'react-redux'
+import { Container, Button } from 'react-bootstrap'
 import { Formik, Form, Field } from 'formik'
 import { TextField } from 'formik-mui'
 import * as yup from 'yup'
 import styles from './styles.module.css'
-import axios from 'axios'
+import { login } from '../../redux/modules/login/actions'
 
 const createSchema = () => {
   return yup.object({
@@ -15,11 +16,11 @@ const createSchema = () => {
 
 const Login = () => {
   const schema = createSchema()
-  const [form, setForm] = useState()
+  const dispatch = useDispatch()
 
   const handleSubmit = (formData) => {
-    //axios.get('/members').then((res) => console.log(res))
-    alert(JSON.stringify(formData, null, 2))
+    dispatch(login(formData))
+    //alert(JSON.stringify(formData, null, 2))
   }
 
   return (

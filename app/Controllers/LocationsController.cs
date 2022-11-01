@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using app.Models;
-using app.Data;
 using app.Extensions;
-using ExpressMapper;
-using ExpressMapper.Extensions;
-using app.Repositories;
 using app.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace app.Controllers
 {
@@ -88,6 +79,7 @@ namespace app.Controllers
         }
 
         // DELETE: api/Checkpoints/5
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult<int>> DeleteCheckpoint(int id)
         {

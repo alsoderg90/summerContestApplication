@@ -3,7 +3,7 @@ using app.Models;
 using app.Extensions;
 using app.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace app.Controllers
 {
@@ -80,6 +80,7 @@ namespace app.Controllers
         }
 
         // DELETE: api/Members/5
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult<int>> DeleteMember(int id)
         {

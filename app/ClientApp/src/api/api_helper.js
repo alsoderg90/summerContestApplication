@@ -13,6 +13,18 @@ axiosApi.interceptors.response.use(
   (error) => Promise.reject(error)
 )
 
+const getToken = () => {
+  return window.localStorage.getItem('token')
+}
+
+export const setToken = (newToken) => {
+  window.localStorage.setItem('token', newToken)
+}
+
+export const setUser = (newUser) => {
+  window.localStorage.setItem('user', newUser)
+}
+
 export async function get(url, config) {
   const response = await axios
     .get(url, {
@@ -27,14 +39,20 @@ export async function create(url, entity, config) {
     .post(url, entity, {
       ...config
     })
-    .then((response) => response.data)
+    .then((response) => {
+      return response.data
+    })
   return response
 }
 
 export async function remove(url, id, config) {
+  const token = getToken()
   const response = await axios
     .delete(`${url}/${id}`, {
-      ...config
+      ...config,
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     })
     .then((response) => response.data)
   return response

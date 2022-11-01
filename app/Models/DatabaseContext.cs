@@ -16,8 +16,11 @@ namespace app.Models
         public DbSet<Member> Members { get; set; } = null!;
         public DbSet<Team> Teams { get; set; } = null!;
         public DbSet<Point> Points { get; set; } = null!;
+        public DbSet<User> Users { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<User>()
+                .HasKey(u => u.Id);
             modelBuilder.Entity<Location>()
                 .HasKey(l => l.Id);
             modelBuilder.Entity<Member>()

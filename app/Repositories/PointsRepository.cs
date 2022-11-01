@@ -1,5 +1,4 @@
 ﻿using app.Models;
-using AutoMapper.Execution;
 using Microsoft.EntityFrameworkCore;
 
 namespace app.Repositories

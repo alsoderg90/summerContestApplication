@@ -1,6 +1,5 @@
 ﻿using app.Models;
 using app.Repositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace app.Services
 {

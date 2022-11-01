@@ -54,7 +54,6 @@ const locationReducer = (state = initialState, action) => {
         selectedLocation: undefined,
         loadingLocations: false
       }
-      console.log(state.locations)
       break
     case SET_NEW_LOCATION_ACTION:
       state = {
