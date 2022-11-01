@@ -1,9 +1,15 @@
 import { takeLatest, put, call } from 'redux-saga/effects'
-import { getMembers, createMember, deleteMember } from 'api/members'
+import {
+  getMembers,
+  createMember,
+  deleteMember,
+  editMember
+} from 'api/members'
 import {
   GET_MEMBERS_ACTION,
   CREATE_MEMBER_ACTION,
-  DELETE_MEMBER_ACTION
+  DELETE_MEMBER_ACTION,
+  EDIT_MEMBER_ACTION
 } from './constants'
 import {
   getMembersError,
@@ -11,7 +17,9 @@ import {
   createMemberSuccess,
   createMemberError,
   deleteMemberSuccess,
-  deleteMemberError
+  deleteMemberError,
+  editMemberError,
+  editMemberSuccess
 } from './actions'
 
 function* onGetMembers() {
@@ -41,10 +49,20 @@ function* onDeleteMember({ id }) {
   }
 }
 
+function* onEditMember({ id, editedMember }) {
+  try {
+    const response = yield call(() => editMember(id, editedMember))
+    yield put(editMemberSuccess(response))
+  } catch (error) {
+    yield put(editMemberError(error))
+  }
+}
+
 function* membersSaga() {
   yield takeLatest(GET_MEMBERS_ACTION, onGetMembers)
   yield takeLatest(CREATE_MEMBER_ACTION, onCreateMember)
   yield takeLatest(DELETE_MEMBER_ACTION, onDeleteMember)
+  yield takeLatest(EDIT_MEMBER_ACTION, onEditMember)
 }
 
 export default membersSaga

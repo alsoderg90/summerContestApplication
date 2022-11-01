@@ -45,8 +45,8 @@ namespace app.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCheckpoint(int id, Location location)
         {
- 
-            if (id != location.Id)
+            var aa = await _locationService.GetById(id);
+            if (aa == null)
             {
                 return BadRequest();
             }

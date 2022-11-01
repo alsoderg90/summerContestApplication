@@ -6,7 +6,6 @@ using app.Repositories;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
-using app;
 
 DotNetEnv.Env.Load();
 var connectionString = Environment.GetEnvironmentVariable("ConnectionString");

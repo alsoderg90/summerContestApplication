@@ -9,10 +9,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import { DeleteButton } from 'components/Buttons/buttons'
 import { selectLocations } from 'redux/modules/locations/selectors'
 import { selectMembers } from 'redux/modules/members/selectors'
-import { createLocation, deleteLocation } from 'redux/modules/locations/actions'
+import {
+  createLocation,
+  deleteLocation,
+  editLocation
+} from 'redux/modules/locations/actions'
 import { getMembers } from 'redux/modules/members/actions'
 import styles from './styles.module.css'
-const emptyMember = { memberId: '', points: 0 }
 
 const member = yup.object({
   memberId: yup
@@ -40,21 +43,22 @@ const LocationForm = ({ location }) => {
   const locations = useSelector((state) => selectLocations(state))
   const selectableMembers = useSelector((state) => selectMembers(state))
   const dispatch = useDispatch()
-  const address = location?.display_name
-    ? location?.display_name
-    : location?.address
+  const newLocation = location?.display_name
+  const address = newLocation ? location?.display_name : location?.address
   const title = location?.title
   const lat = location?.lat
   const lon = location?.lon
+  const id = location?.id
 
+  const emptyMember = { memberId: '', points: 0 }
   const points = location?.points
 
   const members = points?.map((point) => {
-    const { memberId, points, ...rest } = point
-    return { memberId, points }
+    const { memberId, points, locationId, ...rest } = point
+    return { memberId, points, locationId }
   })
 
-  const schema = createSchema()
+  const schema = createSchema(id)
 
   useEffect(() => {
     if (!selectableMembers) dispatch(getMembers())
@@ -63,9 +67,9 @@ const LocationForm = ({ location }) => {
   const handleSubmit = (form, { props, resetForm, setSubmitting }) => {
     const { title, address, points } = form
     const location = { title, address, lat, lon, points }
-    dispatch(createLocation(location))
+    if (newLocation) dispatch(createLocation(location))
+    else dispatch(editLocation(id, { ...location, id }))
     setSubmitting(false)
-    resetForm()
   }
 
   const handleDelete = (id) => {
@@ -115,7 +119,7 @@ const LocationForm = ({ location }) => {
                 <FieldArray name='points'>
                   {({ push, remove }) => (
                     <React.Fragment>
-                      {values.points.map((_, index) => (
+                      {values.points.map((point, index) => (
                         <Row key={index} style={{ marginBottom: '1em' }}>
                           <Col xs={5} style={{ paddingLeft: 0 }}>
                             <FormControl fullWidth>
@@ -139,7 +143,7 @@ const LocationForm = ({ location }) => {
                               component={TextField}
                               label='Points'
                               type='number'
-                            />{' '}
+                            />
                           </Col>
                           <Col>
                             <DeleteButton onClick={() => remove(index)}>

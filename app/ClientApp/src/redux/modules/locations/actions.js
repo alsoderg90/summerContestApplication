@@ -9,7 +9,10 @@ import {
   SET_SELECTED_LOCATION_ACTION,
   DELETE_LOCATION_ACTION,
   DELETE_LOCATION_SUCCESS,
-  DELETE_LOCATION_ERROR
+  DELETE_LOCATION_ERROR,
+  EDIT_LOCATION_ACTION,
+  EDIT_LOCATION_SUCCESS,
+  EDIT_LOCATION_ERROR
 } from './constants'
 
 export const getLocations = () => {
@@ -84,6 +87,28 @@ export const deleteLocationSuccess = (deletedLocation) => {
 export const deleteLocationError = (error) => {
   return {
     type: DELETE_LOCATION_ERROR,
+    payload: error
+  }
+}
+
+export const editLocation = (id, editedLocation) => {
+  return {
+    type: EDIT_LOCATION_ACTION,
+    id,
+    editedLocation
+  }
+}
+
+export const editLocationSuccess = (editedLocation) => {
+  return {
+    type: EDIT_LOCATION_SUCCESS,
+    payload: editedLocation
+  }
+}
+
+export const editLocationError = (error) => {
+  return {
+    type: EDIT_LOCATION_ERROR,
     payload: error
   }
 }

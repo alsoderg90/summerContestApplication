@@ -18,37 +18,57 @@ import {
 
 import { getUserPoints } from 'utils/functions'
 
-const colors = ['#1f77b4', '#ff7f0e', '#2ca02c']
+const colors = [
+  '#1f77b4',
+  '#ff7f0e',
+  '#2ca02c',
+  '#ffd700',
+  '#40e0d0',
+  '#bada55'
+]
 
 export const BarChartComponent = ({ data }) => {
   return (
-    <BarChart width={500} height={250} data={data}>
-      <CartesianGrid strokeDasharray='3 3' />
-      <XAxis dataKey='name' />
-      <YAxis type='number' dataKey='points' />
-      <Tooltip />
-      <Legend />
-      <Bar key='id' dataKey='points'>
-        {data?.map((entry, index) => (
-          <Cell key={`cell-${index}`} fill={colors[index % 20]} />
-        ))}
-      </Bar>
-    </BarChart>
+    <ResponsiveContainer width='99%' aspect={2}>
+      <BarChart data={data} width='100%' height='100%'>
+        <CartesianGrid strokeDasharray='5 5' vertical={false} />
+        <XAxis dataKey='name' />
+        <YAxis type='number' dataKey='points' />
+        <Tooltip />
+        <Bar
+          key='id'
+          dataKey='points'
+          animationDuration={1500}
+          animationEasing='ease-out'
+          animationBegin={500}
+        >
+          {data?.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={colors[index % 20]} />
+          ))}
+        </Bar>
+      </BarChart>
+    </ResponsiveContainer>
   )
 }
 
 export const PieChartComponent = ({ data }) => {
   return (
-    <PieChart width={500} height={250} data={data}>
-      <CartesianGrid strokeDasharray='3 3' />
-      <Tooltip />
-      <Legend />
-      <Pie data={data} dataKey='points'>
-        {data?.map((entry, index) => (
-          <Cell key={`cell-${index}`} fill={colors[index % 20]} />
-        ))}
-      </Pie>
-    </PieChart>
+    <ResponsiveContainer width='99%' aspect={2}>
+      <PieChart width={500} height={250} data={data}>
+        <Tooltip />
+        <Legend />
+        <Pie
+          data={data}
+          dataKey='points'
+          animationDuration={1500}
+          animationEasing='ease-in-out'
+        >
+          {data?.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={colors[index % 20]} />
+          ))}
+        </Pie>
+      </PieChart>
+    </ResponsiveContainer>
   )
 }
 
@@ -70,6 +90,7 @@ const Charts = ({ data }) => {
       onSelect={handleSelect}
       nextIcon={GrNext()}
       prevIcon={GrPrevious()}
+      style={{ left: '-15px', maxWidth: '700px' }}
     >
       <Carousel.Item>
         <BarChartComponent data={dataObjects} />

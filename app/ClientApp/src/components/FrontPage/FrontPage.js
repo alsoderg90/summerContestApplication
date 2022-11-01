@@ -41,7 +41,11 @@ const FrontPage = () => {
         </Col>
         <p></p>
         <Col>
-          <FormTabs tabs={tabs} activeTab={activeTab} />
+          <FormTabs
+            tabs={tabs}
+            activeKey={activeTab}
+            handleClick={(key) => setActiveTab(key)}
+          />
         </Col>
       </Row>
     </Container>

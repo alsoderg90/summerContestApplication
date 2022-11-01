@@ -1,4 +1,5 @@
 ﻿using app.Models;
+using AutoMapper.Execution;
 using Microsoft.EntityFrameworkCore;
 
 namespace app.Repositories
@@ -39,27 +40,40 @@ namespace app.Repositories
 
         public async Task<Team> Update(int id, Team team)
         {
-            _context.Entry(team).State = EntityState.Modified;
+            var existingTeam = _context.Teams
+                    .Where(t => t.Id == id)
+                    .Include(t => t.Members)
+                    .Single();
 
-            try
+            if (existingTeam != null)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                if (!TeamExists(id))
+                _context.Entry(existingTeam).CurrentValues.SetValues(team);
+
+                foreach (var existingChild in existingTeam.Members.ToList())
                 {
-                    return null;
+                    if (!team.Members.Any(m => m.Id == existingChild.Id))
+                        existingChild.Team = null;
+                        existingChild.TeamId = null;
+                        _context.Update(existingChild);
                 }
-                else
+
+                foreach (var child in team.Members)
                 {
-                    throw new Exception(ex.Message);
+                    child.TeamId = id;
+                    child.Team = team;
+                    var existingMember = _context.Members
+                        .Where(m => m.Id == child.Id)
+                        .Include(m => m.Points)
+                        .Single();
+                    _context.Update(existingMember);
+                    _context.Entry(existingMember).CurrentValues.SetValues(child);
                 }
+                _context.SaveChanges();
             }
-            return team;
+            return existingTeam;
         }
 
-        public async Task<Team> Remove(int id)
+            public async Task<Team> Remove(int id)
         {
             var team = await _context.Teams
                 .Include(t => t.Members)

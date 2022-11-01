@@ -7,7 +7,10 @@ import {
   CREATE_MEMBER_SUCCESS,
   DELETE_MEMBER_ACTION,
   DELETE_MEMBER_SUCCESS,
-  DELETE_MEMBER_ERROR
+  DELETE_MEMBER_ERROR,
+  EDIT_MEMBER_ACTION,
+  EDIT_MEMBER_ERROR,
+  EDIT_MEMBER_SUCCESS
 } from './constants'
 
 export const getMembers = () => {
@@ -68,6 +71,28 @@ export const deleteMemberSuccess = (deletedMember) => {
 export const deleteMemberError = (error) => {
   return {
     type: DELETE_MEMBER_ERROR,
+    payload: error
+  }
+}
+
+export const editMember = (id, editedMember) => {
+  return {
+    type: EDIT_MEMBER_ACTION,
+    id,
+    editedMember
+  }
+}
+
+export const editMemberSuccess = (editedMember) => {
+  return {
+    type: EDIT_MEMBER_SUCCESS,
+    payload: editedMember
+  }
+}
+
+export const editMemberError = (error) => {
+  return {
+    type: EDIT_MEMBER_ERROR,
     payload: error
   }
 }

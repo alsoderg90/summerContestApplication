@@ -1,9 +1,10 @@
 import { takeLatest, put, call } from 'redux-saga/effects'
-import { getTeams, createTeam, deleteTeam } from 'api/teams'
+import { getTeams, createTeam, deleteTeam, editTeam } from 'api/teams'
 import {
   GET_TEAMS_ACTION,
   CREATE_TEAM_ACTION,
-  DELETE_TEAM_ACTION
+  DELETE_TEAM_ACTION,
+  EDIT_TEAM_ACTION
 } from './constants'
 import {
   getTeamsError,
@@ -11,7 +12,9 @@ import {
   createTeamSuccess,
   createTeamError,
   deleteTeamError,
-  deleteTeamSuccess
+  deleteTeamSuccess,
+  editTeamError,
+  editTeamSuccess
 } from './actions'
 
 function* onGetTeams() {
@@ -41,10 +44,20 @@ function* onDeleteTeam({ id }) {
   }
 }
 
+function* onEditTeam({ id, editedTeam }) {
+  try {
+    const response = yield call(() => editTeam(id, editedTeam))
+    yield put(editTeamSuccess(response))
+  } catch (error) {
+    yield put(editTeamError(error))
+  }
+}
+
 function* teamsSaga() {
   yield takeLatest(GET_TEAMS_ACTION, onGetTeams)
   yield takeLatest(CREATE_TEAM_ACTION, onCreateTeam)
   yield takeLatest(DELETE_TEAM_ACTION, onDeleteTeam)
+  yield takeLatest(EDIT_TEAM_ACTION, onEditTeam)
 }
 
 export default teamsSaga

@@ -7,7 +7,10 @@ import {
   CREATE_MEMBER_SUCCESS,
   DELETE_MEMBER_ACTION,
   DELETE_MEMBER_SUCCESS,
-  DELETE_MEMBER_ERROR
+  DELETE_MEMBER_ERROR,
+  EDIT_MEMBER_ACTION,
+  EDIT_MEMBER_ERROR,
+  EDIT_MEMBER_SUCCESS
 } from './constants'
 
 const initialState = {
@@ -21,6 +24,7 @@ const memberReducer = (state = initialState, action) => {
   switch (action.type) {
     case DELETE_MEMBER_ACTION:
     case CREATE_MEMBER_ACTION:
+    case EDIT_MEMBER_ACTION:
     case GET_MEMBERS_ACTION:
       state = {
         ...state,
@@ -30,6 +34,7 @@ const memberReducer = (state = initialState, action) => {
       break
     case DELETE_MEMBER_ERROR:
     case CREATE_MEMBER_ERROR:
+    case EDIT_MEMBER_ERROR:
     case GET_MEMBERS_ERROR: {
       const { data, status } = action.payload.response
       state = {
@@ -55,10 +60,22 @@ const memberReducer = (state = initialState, action) => {
         error: undefined
       }
       break
+    case EDIT_MEMBER_SUCCESS:
+      state = {
+        ...state,
+        members: state.members.map((member) => {
+          return member.id === action.payload.id
+            ? action.payload
+            : member
+        })
+      }
+      break
     case DELETE_MEMBER_SUCCESS:
       state = {
         ...state,
-        members: state.members.filter((member) => member.id !== action.payload),
+        members: state.members.filter(
+          (member) => member.id !== action.payload
+        ),
         loadingMembers: false,
         error: undefined
       }

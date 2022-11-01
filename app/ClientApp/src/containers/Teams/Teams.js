@@ -1,29 +1,57 @@
-import { useEffect } from 'react'
-import { Container, Button, Col, Row, Table, Image } from 'react-bootstrap'
+import { useEffect, forwardRef, useState } from 'react'
+import {
+  Container,
+  Button,
+  Col,
+  Row,
+  Table,
+  Image
+} from 'react-bootstrap'
 import { Field, Form, Formik } from 'formik'
 import { TextField, Select } from 'formik-mui'
-import { MenuItem, FormControl } from '@mui/material'
+import { MenuItem, FormControl, Menu } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
-import { DeleteButton } from 'components/Buttons/buttons'
+import { DeleteButton, EditButton } from 'components/Buttons/buttons'
 import * as yup from 'yup'
 import FormTabs from 'components/FormTabs/FormTabs'
 import { getMembers } from 'redux/modules/members/actions'
 import { selectMembers } from 'redux/modules/members/selectors'
-import { getTeams, createTeam, deleteTeam } from 'redux/modules/teams/actions'
+import {
+  getTeams,
+  createTeam,
+  deleteTeam,
+  editTeam
+} from 'redux/modules/teams/actions'
 import { selectTeams } from 'redux/modules/teams/selectors'
 import { getUserPoints, getTeamPoints } from 'utils/functions'
+
+const defaultTeam = {
+  name: '',
+  members: []
+}
+
+const member = yup.object({
+  name: yup.string(),
+  nationality: yup.string()
+})
 
 const createSchema = () => {
   return yup.object({
     name: yup.string().required(),
-    members: yup.array().required().min(1, 'Must have at least one member')
+    members: yup
+      .array()
+      .of(member)
+      .required()
+      .min(1, 'Must have at least one member')
   })
 }
 
 const Teams = () => {
   const dispatch = useDispatch()
   const schema = createSchema()
-
+  const [activeKey, setActiveKey] = useState('Form')
+  const [activeKeyTeam, setActiveKeyTeam] = useState(undefined)
+  const [editableTeam, setEditableTeam] = useState(undefined)
   const members = useSelector((state) => selectMembers(state))
   const teams = useSelector((state) => selectTeams(state))
 
@@ -35,7 +63,10 @@ const Teams = () => {
     if (!members) dispatch(getMembers())
   }, [members])
 
-  const handleSubmit = (formData, { props, resetForm, setSubmitting }) => {
+  const handleSubmit = (
+    formData,
+    { props, resetForm, setSubmitting }
+  ) => {
     dispatch(createTeam(formData))
     setSubmitting(false)
     resetForm()
@@ -43,6 +74,12 @@ const Teams = () => {
 
   const handleDelete = (id) => {
     dispatch(deleteTeam(id))
+  }
+
+  const handleEdit = (formData, { resetForm, setSubmitting }) => {
+    const id = editableTeam.id
+    dispatch(editTeam(id, { ...formData, id }))
+    setSubmitting(false)
   }
 
   const renderTeams = (teams) => {
@@ -81,7 +118,15 @@ const Teams = () => {
             ))}
           </tbody>
         </Table>
-        <DeleteButton onClick={() => handleDelete(team.id)}></DeleteButton>
+        <DeleteButton
+          onClick={() => handleDelete(team.id)}
+        ></DeleteButton>{' '}
+        <EditButton
+          onClick={() => {
+            setActiveKey('Form')
+            setEditableTeam(team)
+          }}
+        ></EditButton>
       </div>
     ))
   }
@@ -89,14 +134,22 @@ const Teams = () => {
   return (
     <Container>
       <FormTabs
+        handleClick={(key) => setActiveKey(key)}
+        activeKey={activeKey}
         tabs={[
           <div key='Form' name='Form'>
             <Formik
-              initialValues={{ name: '', members: [] }}
-              onSubmit={handleSubmit}
+              initialValues={{
+                name: editableTeam
+                  ? editableTeam.name
+                  : defaultTeam.name,
+                members: []
+              }}
+              onSubmit={editableTeam ? handleEdit : handleSubmit}
               validationSchema={schema}
+              enableReinitialize
             >
-              {({ errors, touched, setFieldValue }) => (
+              {({ errors, touched, values, setFieldValue }) => (
                 <Form>
                   <Container>
                     <Row>
@@ -111,6 +164,7 @@ const Teams = () => {
                         </FormControl>
                       </Col>
                     </Row>
+                    <p></p>
                     <Row>
                       <Col style={{ marginBottom: '1em' }}>
                         <FormControl fullWidth>
@@ -119,6 +173,11 @@ const Teams = () => {
                             multiple
                             component={Select}
                             label='Name'
+                            renderValue={(selected) =>
+                              selected
+                                .map((obj) => obj.name)
+                                .join(', ')
+                            }
                           >
                             {members?.map((m) => (
                               <MenuItem key={m.id} value={m}>
@@ -133,7 +192,14 @@ const Teams = () => {
                       <Col>
                         <Button type='submit' variant='success'>
                           Submit
-                        </Button>
+                        </Button>{' '}
+                        {editableTeam && (
+                          <Button
+                            onClick={() => setEditableTeam(undefined)}
+                          >
+                            Reset
+                          </Button>
+                        )}
                       </Col>
                     </Row>
                   </Container>
@@ -144,7 +210,11 @@ const Teams = () => {
           <div key='teams' name='Teams'>
             <Col sm={8}>
               {teams && teams.length > 0 ? (
-                <FormTabs tabs={renderTeams(teams)}></FormTabs>
+                <FormTabs
+                  tabs={renderTeams(teams)}
+                  activeKey={activeKeyTeam}
+                  handleClick={(key) => setActiveKeyTeam(key)}
+                ></FormTabs>
               ) : (
                 <></>
               )}

@@ -45,6 +45,17 @@ export async function create(url, entity, config) {
   return response
 }
 
+export async function edit(url, id, entity, config) {
+  const response = await axios
+    .put(`${url}/${id}`, entity, {
+      ...config
+    })
+    .then((response) => {
+      return response.data
+    })
+  return response
+}
+
 export async function remove(url, id, config) {
   const token = getToken()
   const response = await axios

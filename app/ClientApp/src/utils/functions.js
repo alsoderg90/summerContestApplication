@@ -7,6 +7,6 @@ export const getUserPoints = (points, id) => {
 
 export const getTeamPoints = (members) => {
   return members
-    .map((member) => getUserPoints(member.points, member.id))
+    ?.map((member) => getUserPoints(member.points, member.id))
     .reduce((a, b) => a + b, 0)
 }

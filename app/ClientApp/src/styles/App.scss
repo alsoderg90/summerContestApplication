@@ -1,6 +1,5 @@
 @import 'leaflet/dist/leaflet.css';
 @import 'bootstrap/dist/css/bootstrap.min.css';
-@import 'react-widgets/scss/styles.scss';
 
 $black: rgb(33, 37, 41);
 
@@ -27,4 +26,14 @@ $black: rgb(33, 37, 41);
 .form-errors {
   color: red;
   font-weight: 550;
+}
+
+.carousel-control-prev {
+  left: -20px;
+  top: -20px;
+}
+
+.carousel-control-next {
+  right: -50px;
+  top: -20px;
 }

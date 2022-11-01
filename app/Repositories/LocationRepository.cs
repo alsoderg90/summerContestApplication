@@ -1,5 +1,6 @@
 ﻿using app.Models;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace app.Repositories
 {
@@ -16,6 +17,7 @@ namespace app.Repositories
             var locations = await _context.Locations
                 .Include(l => l.Points)
                 .ThenInclude(p => p.Member)
+                .ThenInclude(m => m.Team)
                 .ToListAsync();
 
             return locations;
@@ -23,7 +25,8 @@ namespace app.Repositories
 
         public async Task<Location> GetById(int id)
         {
-            var location = await _context.Locations.FindAsync(id);
+            var location = await _context.Locations
+                .FindAsync(id);
             return location;
         }
 
@@ -39,35 +42,52 @@ namespace app.Repositories
             await _context.SaveChangesAsync();
             return location;
         }
+        /// https://stackoverflow.com/questions/27176014/how-to-add-update-child-entities-when-updating-a-parent-entity-in-ef
         public async Task<Location> Update(int id, Location location)
         {
-            _context.Entry(location).State = EntityState.Modified;
+            var existingLocation = _context.Locations
+                .Where(l => l.Id == id)
+                .Include(l => l.Points)
+                .ThenInclude(p => p.Member)
+                .SingleOrDefault();
 
-            //foreach (var points in checkpoint.Points)
-            //{
-            //    await _context.AddAsync(points);
-            //    var member = await _context.Members.FindAsync(points.MemberId);
-            //    points.Member = member;
-            //    var location = await _context.Locations.FindAsync(points.LocationId);
-            //    points.Location = location;
-            //}
+            if (existingLocation != null)
+            {
+                _context.Entry(existingLocation).CurrentValues.SetValues(location);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                if (!LocationExists(id))
+                foreach (var existingChild in existingLocation.Points.ToList())
                 {
-                    return null;
+                    if (!location.Points.Any(p => p.LocationId == existingChild.LocationId && p.MemberId == existingChild.MemberId))
+                        _context.Points.Remove(existingChild);
                 }
-                else
+
+                foreach (var child in location.Points)
                 {
-                    throw new Exception(ex.Message);
+                    var existingChild = existingLocation.Points
+                        .Where(p => p.LocationId == child.LocationId && p.MemberId == child.MemberId && p.LocationId != default(int))
+                        .SingleOrDefault();
+                    
+                    if (existingChild != null)
+                    {
+                        _context.Entry(existingChild).CurrentValues.SetValues(child);
+                    }
+                    else
+                    {
+                        var member = _context.Members.Where(m => m.Id == child.MemberId).SingleOrDefault();
+                        var newChild = new Point
+                        {
+                            Location = location,
+                            LocationId = child.LocationId,
+                            Member = member,
+                            MemberId = child.MemberId,
+                            Points = child.Points
+                        };
+                        existingLocation.Points.Add(newChild);
+                    }
                 }
+                _context.SaveChanges();
             }
-            return location;
+            return existingLocation;
         }
 
         public async Task<Location> Remove(int id)

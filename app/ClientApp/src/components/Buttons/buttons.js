@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Modal, Button } from 'react-bootstrap'
 import { BsFillTrashFill } from 'react-icons/bs'
+import { AiOutlineEdit } from 'react-icons/ai'
 import { BiRefresh } from 'react-icons/bi'
 import PropTypes from 'prop-types'
 
@@ -53,4 +54,16 @@ export const RefreshButton = () => {
       Refresh <BiRefresh size={25}></BiRefresh>
     </Button>
   )
+}
+
+export const EditButton = ({ onClick }) => {
+  return (
+    <Button onClick={onClick}>
+      <AiOutlineEdit></AiOutlineEdit>
+    </Button>
+  )
+}
+
+EditButton.propTypes = {
+  onClick: PropTypes.func
 }

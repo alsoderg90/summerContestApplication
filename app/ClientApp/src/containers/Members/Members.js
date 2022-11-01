@@ -1,5 +1,13 @@
-import { useEffect } from 'react'
-import { Container, Col, Row, Image, Button, Table } from 'react-bootstrap'
+import { useEffect, useState } from 'react'
+import {
+  Container,
+  Col,
+  Row,
+  Image,
+  Button,
+  Table,
+  ButtonGroup
+} from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import * as yup from 'yup'
 import { Field, Form, Formik } from 'formik'
@@ -12,7 +20,8 @@ import restCountriesService from 'api/restcountries'
 import {
   getMembers,
   createMember,
-  deleteMember
+  deleteMember,
+  editMember
 } from 'redux/modules/members/actions'
 import { getPoints } from 'redux/modules/points/actions'
 import { getUserPoints } from 'utils/functions'
@@ -21,10 +30,12 @@ import {
   selectMembersError
 } from 'redux/modules/members/selectors'
 import { selectPoints } from 'redux/modules/points/selectors'
-import { DeleteButton } from 'components/Buttons/buttons'
+import { DeleteButton, EditButton } from 'components/Buttons/buttons'
 import ErrorComponent from 'components/ErrorComponent/ErrorComponent'
 
 import styles from './styles.module.css'
+
+const defaultMember = { name: '', nationality: 'Finland' }
 
 const createSchema = () => {
   return yup.object({
@@ -41,7 +52,8 @@ const Members = () => {
   const members = useSelector((state) => selectMembers(state))
   const points = useSelector((state) => selectPoints(state))
   const errors = useSelector((state) => selectMembersError(state))
-
+  const [activeKey, setActiveKey] = useState('Form')
+  const [editableMember, setEditableMember] = useState()
   const schema = createSchema()
 
   useEffect(() => {
@@ -56,21 +68,25 @@ const Members = () => {
     formData,
     { props, resetForm, setSubmitting }
   ) => {
-    try {
-      const res = await restCountriesService.get(formData)
-      const { svg } = res.data[0].flags
-      const newMember = { ...formData, flagUrl: svg }
-      dispatch(createMember(newMember))
-    } catch (e) {
-      const newMember = { ...formData, flag: '' }
-      dispatch(createMember(newMember))
-    }
+    const response = await restCountriesService.get(formData)
+    const newMember = { ...formData, flagUrl: response }
+    dispatch(createMember(newMember))
     setSubmitting(false)
     resetForm()
   }
 
   const handleDelete = (id) => {
     dispatch(deleteMember(id))
+  }
+
+  const handleEdit = async (
+    formData,
+    { resetForm, setSubmitting }
+  ) => {
+    const response = await restCountriesService.get(formData)
+    const editedMember = { ...formData, flagUrl: response }
+    dispatch(editMember(editedMember.id, editedMember))
+    setSubmitting(false)
   }
 
   if (errors) {
@@ -80,10 +96,18 @@ const Members = () => {
   return (
     <Container>
       <Row>
-        <Col sm={8}>
+        <Col>
           <FormTabs
+            handleClick={(key) => setActiveKey(key)}
+            activeKey={activeKey}
             tabs={[
-              <Table key='Members' name='Members' striped bordered hover>
+              <Table
+                key='Members'
+                name='Members'
+                striped
+                bordered
+                hover
+              >
                 <thead>
                   <tr>
                     <th>Name</th>
@@ -106,20 +130,38 @@ const Members = () => {
                       </td>
                       <td>{getUserPoints(points, member.id)}</td>
                       <td>
-                        <DeleteButton
-                          onClick={() => handleDelete(member.id)}
-                        ></DeleteButton>
+                        <ButtonGroup>
+                          <DeleteButton
+                            onClick={() => handleDelete(member.id)}
+                          ></DeleteButton>
+                          <EditButton
+                            onClick={() => {
+                              setActiveKey('Form')
+                              setEditableMember(member)
+                            }}
+                          ></EditButton>
+                        </ButtonGroup>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </Table>,
-              <Charts key='Charts' name='Charts' data={members}></Charts>,
+              <Charts
+                key='Charts'
+                name='Charts'
+                data={members}
+              ></Charts>,
               <Col sm={4} key='Form' name='Form'>
+                <p></p>
                 <Formik
-                  initialValues={{ name: '', nationality: 'Finland' }}
-                  onSubmit={handleSubmit}
+                  initialValues={
+                    editableMember ? editableMember : defaultMember
+                  }
+                  onSubmit={
+                    editableMember ? handleEdit : handleSubmit
+                  }
                   validationSchema={schema}
+                  enableReinitialize
                 >
                   {({ errors, touched }) => (
                     <Form>
@@ -162,6 +204,16 @@ const Members = () => {
                           <Button type='submit' variant='success'>
                             Submit
                           </Button>{' '}
+                          {editableMember && (
+                            <Button
+                              onClick={() =>
+                                setEditableMember(undefined)
+                              }
+                            >
+                              {' '}
+                              Reset
+                            </Button>
+                          )}
                         </Col>
                       </Container>
                     </Form>
