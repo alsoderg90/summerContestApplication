@@ -13,7 +13,9 @@ export const JsErrorComponent = ({ error, resetErrorBoundary }) => {
         Something went wrong, please try again
       </Card.Header>
       <Card.Body>
-        <Card.Text>Please go back to previous page or try again.</Card.Text>
+        <Card.Text>
+          Please go back to previous page or try again.
+        </Card.Text>
         <Button onClick={() => navigate(-1)}>Back</Button>{' '}
         <Button onClick={resetErrorBoundary}>Try Again</Button>
       </Card.Body>
@@ -31,7 +33,7 @@ const DefaultErrorComponent = ({ message, status }) => {
 
   return (
     <Modal show={show} onHide={handleClose}>
-      <Modal.Header closeButton>
+      <Modal.Header>
         <Modal.Title>{`Error: ${status}`}</Modal.Title>
       </Modal.Header>
       <Modal.Body>

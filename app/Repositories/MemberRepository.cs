@@ -13,7 +13,8 @@ namespace app.Repositories
         public async Task<List<Member>> GetAll()
         {
             var members = await _context.Members
-                    .Include(l => l.Points)
+                    .Include(m => m.Points)
+                    .Include(m => m.Team)
                     .ToListAsync();
 
             return members;

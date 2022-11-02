@@ -5,12 +5,15 @@ import {
   CREATE_MEMBER_ACTION,
   CREATE_MEMBER_ERROR,
   CREATE_MEMBER_SUCCESS,
+  CREATE_MEMBER_LOCATION_SUCCESS,
   DELETE_MEMBER_ACTION,
   DELETE_MEMBER_SUCCESS,
   DELETE_MEMBER_ERROR,
   EDIT_MEMBER_ACTION,
   EDIT_MEMBER_ERROR,
-  EDIT_MEMBER_SUCCESS
+  EDIT_MEMBER_SUCCESS,
+  EDIT_MEMBER_LOCATION_SUCCESS,
+  DELETE_MEMBER_LOCATION_SUCCESS
 } from './constants'
 
 export const getMembers = () => {
@@ -37,6 +40,13 @@ export const createMember = (newMember) => {
   return {
     type: CREATE_MEMBER_ACTION,
     newMember
+  }
+}
+
+export const createMemberLocationSuccess = (newLocation) => {
+  return {
+    type: CREATE_MEMBER_LOCATION_SUCCESS,
+    payload: newLocation
   }
 }
 
@@ -94,5 +104,19 @@ export const editMemberError = (error) => {
   return {
     type: EDIT_MEMBER_ERROR,
     payload: error
+  }
+}
+
+export const editMemberLocationSuccess = (editedLocation) => {
+  return {
+    type: EDIT_MEMBER_LOCATION_SUCCESS,
+    payload: editedLocation
+  }
+}
+
+export const deleteMemberLocationSuccess = (deletedLocation) => {
+  return {
+    type: DELETE_MEMBER_LOCATION_SUCCESS,
+    payload: deletedLocation
   }
 }

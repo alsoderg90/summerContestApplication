@@ -16,3 +16,8 @@ export const selectSelectedLocation = createSelector(
   [selectDomain],
   (locations) => locations.selectedLocation
 )
+
+export const selectLocationError = createSelector(
+  [selectDomain],
+  (location) => location.error
+)

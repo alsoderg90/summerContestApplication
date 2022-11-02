@@ -10,7 +10,9 @@ import {
   DELETE_TEAM_SUCCESS,
   EDIT_TEAM_ACTION,
   EDIT_TEAM_ERROR,
-  EDIT_TEAM_SUCCESS
+  EDIT_TEAM_SUCCESS,
+  EDIT_TEAM_MEMBER_SUCCESS,
+  DELETE_TEAM_MEMBER_SUCCESS
 } from './constants'
 
 export const getTeams = () => {
@@ -75,6 +77,13 @@ export const deleteTeamError = (error) => {
   }
 }
 
+export const deleteTeamMemberSuccess = (id) => {
+  return {
+    type: DELETE_TEAM_MEMBER_SUCCESS,
+    payload: id
+  }
+}
+
 export const editTeam = (id, editedTeam) => {
   return {
     type: EDIT_TEAM_ACTION,
@@ -94,5 +103,12 @@ export const editTeamError = (error) => {
   return {
     type: EDIT_TEAM_ERROR,
     payload: error
+  }
+}
+
+export const editTeamMemberSuccess = (editedMember) => {
+  return {
+    type: EDIT_TEAM_MEMBER_SUCCESS,
+    payload: editedMember
   }
 }

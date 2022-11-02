@@ -6,3 +6,8 @@ export const selectTeams = createSelector(
   [selectDomain],
   (teams) => teams.teams
 )
+
+export const selectTeamsError = createSelector(
+  [selectDomain],
+  (teams) => teams.error
+)

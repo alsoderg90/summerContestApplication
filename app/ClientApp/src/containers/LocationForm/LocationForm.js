@@ -7,14 +7,20 @@ import { MenuItem, FormControl } from '@mui/material'
 import * as yup from 'yup'
 import { useDispatch, useSelector } from 'react-redux'
 import { DeleteButton } from 'components/Buttons/buttons'
-import { selectLocations } from 'redux/modules/locations/selectors'
+import {
+  selectLocations,
+  selectLocationError
+} from 'redux/modules/locations/selectors'
 import { selectMembers } from 'redux/modules/members/selectors'
+import { selectTeams } from 'redux/modules/teams/selectors'
 import {
   createLocation,
   deleteLocation,
   editLocation
 } from 'redux/modules/locations/actions'
+import { getTeams } from 'redux/modules/teams/actions'
 import { getMembers } from 'redux/modules/members/actions'
+import ErrorComponent from 'components/ErrorComponent/ErrorComponent'
 import styles from './styles.module.css'
 
 const member = yup.object({
@@ -22,7 +28,10 @@ const member = yup.object({
     .number()
     .typeError('Insert number')
     .required('Name is required'),
-  points: yup.number().typeError('Insert number').required('Points is required')
+  points: yup
+    .number()
+    .typeError('Insert number')
+    .required('Points is required')
 })
 
 const createSchema = () =>
@@ -31,7 +40,7 @@ const createSchema = () =>
       .array()
       .of(member)
       .min(1, 'Must have at least one member')
-      .test('is-unique', 'Member already added', (points, context) => {
+      .test('is-unique', 'Member already added', (points) => {
         const members = points?.map((point) => point.memberId)
         return new Set(members).size === members.length
       }),
@@ -41,10 +50,16 @@ const createSchema = () =>
 
 const LocationForm = ({ location }) => {
   const locations = useSelector((state) => selectLocations(state))
-  const selectableMembers = useSelector((state) => selectMembers(state))
+  const errors = useSelector((state) => selectLocationError(state))
+  const teams = useSelector((state) => selectTeams(state))
+  const selectableMembers = useSelector((state) =>
+    selectMembers(state)
+  )
   const dispatch = useDispatch()
   const newLocation = location?.display_name
-  const address = newLocation ? location?.display_name : location?.address
+  const address = newLocation
+    ? location?.display_name
+    : location?.address
   const title = location?.title
   const lat = location?.lat
   const lon = location?.lon
@@ -58,13 +73,20 @@ const LocationForm = ({ location }) => {
     return { memberId, points, locationId }
   })
 
-  const schema = createSchema(id)
+  const schema = createSchema()
 
   useEffect(() => {
     if (!selectableMembers) dispatch(getMembers())
   }, [selectableMembers])
 
-  const handleSubmit = (form, { props, resetForm, setSubmitting }) => {
+  useEffect(() => {
+    if (!teams) dispatch(getTeams())
+  }, [teams])
+
+  const handleSubmit = (
+    form,
+    { props, resetForm, setSubmitting }
+  ) => {
     const { title, address, points } = form
     const location = { title, address, lat, lon, points }
     if (newLocation) dispatch(createLocation(location))
@@ -74,6 +96,10 @@ const LocationForm = ({ location }) => {
 
   const handleDelete = (id) => {
     dispatch(deleteLocation(id))
+  }
+
+  if (errors) {
+    return <ErrorComponent {...errors}></ErrorComponent>
   }
 
   return (
@@ -120,14 +146,18 @@ const LocationForm = ({ location }) => {
                   {({ push, remove }) => (
                     <React.Fragment>
                       {values.points.map((point, index) => (
-                        <Row key={index} style={{ marginBottom: '1em' }}>
+                        <Row
+                          key={index}
+                          style={{ marginBottom: '1em' }}
+                        >
                           <Col xs={5} style={{ paddingLeft: 0 }}>
                             <FormControl fullWidth>
                               <Field
                                 name={`points[${index}.memberId`}
                                 component={Select}
-                                label='Name'
+                                label='Member'
                                 type='number'
+                                data-testing-id={`member-${index}`}
                               >
                                 {selectableMembers?.map((sm) => (
                                   <MenuItem key={sm.id} value={sm.id}>
@@ -143,10 +173,13 @@ const LocationForm = ({ location }) => {
                               component={TextField}
                               label='Points'
                               type='number'
+                              data-testing-id={`member-${index}-points`}
                             />
                           </Col>
                           <Col>
-                            <DeleteButton onClick={() => remove(index)}>
+                            <DeleteButton
+                              onClick={() => remove(index)}
+                            >
                               Delete
                             </DeleteButton>
                           </Col>
@@ -155,7 +188,10 @@ const LocationForm = ({ location }) => {
                       <Row>
                         <Col>
                           {typeof errors.points === 'string' ? (
-                            <p style={{ color: 'red' }}> {errors.points}</p>
+                            <p style={{ color: 'red' }}>
+                              {' '}
+                              {errors.points}
+                            </p>
                           ) : null}
                         </Col>
                       </Row>

@@ -10,9 +10,11 @@ import {
   DELETE_LOCATION_ACTION,
   DELETE_LOCATION_SUCCESS,
   DELETE_LOCATION_ERROR,
+  DELETE_MEMBER_POINTS_SUCCESS,
   EDIT_LOCATION_ACTION,
   EDIT_LOCATION_SUCCESS,
-  EDIT_LOCATION_ERROR
+  EDIT_LOCATION_ERROR,
+  EDIT_MEMBER_POINTS_SUCCESS
 } from './constants'
 
 export const getLocations = () => {
@@ -91,6 +93,13 @@ export const deleteLocationError = (error) => {
   }
 }
 
+export const deleteMemberPointsSuccess = (error) => {
+  return {
+    type: DELETE_MEMBER_POINTS_SUCCESS,
+    payload: error
+  }
+}
+
 export const editLocation = (id, editedLocation) => {
   return {
     type: EDIT_LOCATION_ACTION,
@@ -110,5 +119,12 @@ export const editLocationError = (error) => {
   return {
     type: EDIT_LOCATION_ERROR,
     payload: error
+  }
+}
+
+export const editMemberPointsSuccess = (editedMember) => {
+  return {
+    type: EDIT_MEMBER_POINTS_SUCCESS,
+    payload: editedMember
   }
 }

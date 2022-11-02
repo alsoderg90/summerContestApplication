@@ -1,4 +1,4 @@
-import { useEffect, forwardRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Container,
   Button,
@@ -9,11 +9,12 @@ import {
 } from 'react-bootstrap'
 import { Field, Form, Formik } from 'formik'
 import { TextField, Select } from 'formik-mui'
-import { MenuItem, FormControl, Menu } from '@mui/material'
+import { MenuItem, FormControl } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import { DeleteButton, EditButton } from 'components/Buttons/buttons'
 import * as yup from 'yup'
 import FormTabs from 'components/FormTabs/FormTabs'
+import ErrorComponent from 'components/ErrorComponent/ErrorComponent'
 import { getMembers } from 'redux/modules/members/actions'
 import { selectMembers } from 'redux/modules/members/selectors'
 import {
@@ -22,7 +23,10 @@ import {
   deleteTeam,
   editTeam
 } from 'redux/modules/teams/actions'
-import { selectTeams } from 'redux/modules/teams/selectors'
+import {
+  selectTeams,
+  selectTeamsError
+} from 'redux/modules/teams/selectors'
 import { getUserPoints, getTeamPoints } from 'utils/functions'
 
 const defaultTeam = {
@@ -43,6 +47,21 @@ const createSchema = () => {
       .of(member)
       .required()
       .min(1, 'Must have at least one member')
+    //   .test(
+    //     'is-added',
+    //     'Member belongs another team',
+    //     (members, context) => {
+    //       console.log(members, context)
+    //       return members.map((member) =>
+    //         member.team
+    //           ? this.createError({
+    //               message: `Custom Message here ${value}`,
+    //               path: 'fieldName' // Fieldname
+    //             })
+    //           : true
+    //       )
+    //     }
+    //   )
   })
 }
 
@@ -54,6 +73,7 @@ const Teams = () => {
   const [editableTeam, setEditableTeam] = useState(undefined)
   const members = useSelector((state) => selectMembers(state))
   const teams = useSelector((state) => selectTeams(state))
+  const errors = useSelector((state) => selectTeamsError(state))
 
   useEffect(() => {
     if (!teams) dispatch(getTeams())
@@ -83,52 +103,58 @@ const Teams = () => {
   }
 
   const renderTeams = (teams) => {
-    return teams?.map((team) => (
-      <div key={team.id} name={team.name}>
-        {/* <th colSpan={2}>{team.name.toUpperCase()} </th>
+    return teams?.map((team) => {
+      return (
+        <div key={team.id} name={team.name}>
+          {/* <th colSpan={2}>{team.name.toUpperCase()} </th>
         <th colSpan={1}> {getTeamPoints(team.members)}</th>
         <th colSpan={1}>
           {' '}
         </th> */}
-        <h5>{`Points: ${getTeamPoints(team.members)}`}</h5>
-        <h5>Members:</h5>
-        <Table striped bordered hover style={{ marginTop: '1em' }}>
-          <thead>
-            <tr></tr>
-            <tr>
-              <th>Name</th>
-              <th>Nationality</th>
-              <th>Points</th>
-            </tr>
-          </thead>
-          <tbody>
-            {team.members?.map((member, j) => (
-              <tr key={j}>
-                <td>{member.name}</td>
-                <td>
-                  <Image
-                    alt={member.nationality}
-                    width={100}
-                    height={40}
-                    src={member.flagUrl}
-                  ></Image>
-                </td>
-                <td>{getUserPoints(member.points, member.id)}</td>
+          <h5>{`Points: ${getTeamPoints(team.members)}`}</h5>
+          <h5>Members:</h5>
+          <Table striped bordered hover style={{ marginTop: '1em' }}>
+            <thead>
+              <tr></tr>
+              <tr>
+                <th>Name</th>
+                <th>Nationality</th>
+                <th>Points</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
-        <DeleteButton
-          onClick={() => handleDelete(team.id)}
-        ></DeleteButton>{' '}
-        <EditButton
-          onClick={() => {
-            setActiveKey('Form')
-            setEditableTeam(team)
-          }}
-        ></EditButton>
-      </div>
-    ))
+            </thead>
+            <tbody>
+              {team.members?.map((member, j) => (
+                <tr key={j}>
+                  <td>{member.name}</td>
+                  <td>
+                    <Image
+                      alt={member.nationality}
+                      width={100}
+                      height={40}
+                      src={member.flagUrl}
+                    ></Image>
+                  </td>
+                  <td>{getUserPoints(member.points, member.id)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+          <DeleteButton
+            onClick={() => handleDelete(team.id)}
+          ></DeleteButton>{' '}
+          <EditButton
+            onClick={() => {
+              setActiveKey('Form')
+              setEditableTeam(team)
+            }}
+          ></EditButton>
+        </div>
+      )
+    })
+  }
+
+  if (errors) {
+    return <ErrorComponent {...errors}></ErrorComponent>
   }
 
   return (
@@ -172,7 +198,7 @@ const Teams = () => {
                             name='members'
                             multiple
                             component={Select}
-                            label='Name'
+                            label='Members'
                             renderValue={(selected) =>
                               selected
                                 .map((obj) => obj.name)

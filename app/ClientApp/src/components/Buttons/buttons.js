@@ -13,17 +13,26 @@ export const DeleteButton = ({ onClick, ...rest }) => {
         {...rest}
         variant='danger'
         onClick={() => setShowDeleteModal(true)}
+        data-testing-id='delete-btn'
       >
         <BsFillTrashFill />
       </Button>
 
-      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+      <Modal
+        show={showDeleteModal}
+        onHide={() => setShowDeleteModal(false)}
+      >
         <Modal.Header closeButton>
           <Modal.Title>Warning</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure you want to delete this item?</Modal.Body>
+        <Modal.Body>
+          Are you sure you want to delete this item?
+        </Modal.Body>
         <Modal.Footer>
-          <Button variant='secondary' onClick={() => setShowDeleteModal(false)}>
+          <Button
+            variant='secondary'
+            onClick={() => setShowDeleteModal(false)}
+          >
             Close
           </Button>
           <Button
@@ -33,7 +42,7 @@ export const DeleteButton = ({ onClick, ...rest }) => {
               setShowDeleteModal(false)
             }}
           >
-            <BsFillTrashFill />
+            Delete <BsFillTrashFill />
           </Button>
         </Modal.Footer>
       </Modal>
@@ -58,7 +67,7 @@ export const RefreshButton = () => {
 
 export const EditButton = ({ onClick }) => {
   return (
-    <Button onClick={onClick}>
+    <Button onClick={onClick} data-testing-id='edit-btn'>
       <AiOutlineEdit></AiOutlineEdit>
     </Button>
   )

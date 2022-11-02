@@ -10,15 +10,15 @@ import {
   DELETE_TEAM_SUCCESS,
   EDIT_TEAM_ACTION,
   EDIT_TEAM_ERROR,
-  EDIT_TEAM_SUCCESS
+  EDIT_TEAM_SUCCESS,
+  EDIT_TEAM_MEMBER_SUCCESS,
+  DELETE_TEAM_MEMBER_SUCCESS
 } from './constants'
 
 const initialState = {
   teams: undefined,
   loadingTeams: false,
-  error: {
-    message: ''
-  }
+  error: undefined
 }
 
 /* eslint-disable indent */
@@ -33,13 +33,15 @@ const teamReducer = (state = initialState, action) => {
     case CREATE_TEAM_ERROR:
     case DELETE_TEAM_ERROR:
     case EDIT_TEAM_ERROR:
-    case GET_TEAMS_ERROR:
+    case GET_TEAMS_ERROR: {
+      const { data, status } = action.payload.response
       state = {
         ...state,
-        error: { message: 'Error' },
-        loadingTeams: false
+        error: { message: data, status },
+        loadingMembers: false
       }
       break
+    }
     case GET_TEAMS_SUCCESS:
       state = { ...state, teams: action.payload, loadingTeams: false }
       break
@@ -52,7 +54,7 @@ const teamReducer = (state = initialState, action) => {
       break
     case EDIT_TEAM_SUCCESS:
       {
-        const teams = state.teams.map((team) => {
+        const teams = state.teams?.map((team) => {
           const members = team.members.filter((member) => {
             return action.payload.members.some(
               (am) => am.id !== member.id
@@ -67,6 +69,37 @@ const teamReducer = (state = initialState, action) => {
           teams,
           loadingTeams: false
         }
+      }
+      break
+    case EDIT_TEAM_MEMBER_SUCCESS: {
+      const teamId = action.payload.team?.id
+      const { id } = action.payload
+      if (teamId)
+        state = {
+          ...state,
+          teams: state.teams.map((team) =>
+            team.id !== teamId
+              ? team
+              : {
+                  ...team,
+                  members: team.members.map((member) =>
+                    member.id === id ? action.payload : member
+                  )
+                }
+          )
+        }
+      else state = { ...state }
+      break
+    }
+    case DELETE_TEAM_MEMBER_SUCCESS:
+      state = {
+        ...state,
+        teams: state.teams.map((team) => {
+          const members = team.members.filter(
+            (member) => member.id !== action.payload
+          )
+          return { ...team, members }
+        })
       }
       break
     case DELETE_TEAM_SUCCESS:

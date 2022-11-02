@@ -1,4 +1,4 @@
-import { Container, Table, Col, Row } from 'react-bootstrap'
+import { Container, Table, Image } from 'react-bootstrap'
 import PropTypes from 'prop-types'
 
 const LocationInfo = ({ location }) => {
@@ -11,6 +11,7 @@ const LocationInfo = ({ location }) => {
           <tr>
             <th>Name</th>
             <th>Points</th>
+            <th>Nationality</th>
             <th>Team</th>
           </tr>
         </thead>
@@ -19,6 +20,14 @@ const LocationInfo = ({ location }) => {
             <tr key={index}>
               <td>{point.member.name}</td>
               <td>{point.points}</td>
+              <td>
+                <Image
+                  alt={point.member.nationality}
+                  width={100}
+                  height={40}
+                  src={point.member.flagUrl}
+                ></Image>
+              </td>
               <td>{point.member.team?.name}</td>
             </tr>
           ))}

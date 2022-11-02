@@ -6,12 +6,12 @@ namespace app.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class LoginController : ControllerBase
     {
         //private readonly DatabaseContext _context;
         private readonly UserService _userService;
         private readonly AuthService _authService;
-        public UsersController(UserService userService, AuthService authService)
+        public LoginController(UserService userService, AuthService authService)
         {
             _userService = userService;
             _authService = authService;

@@ -1,4 +1,4 @@
-import { takeLatest, put, call } from 'redux-saga/effects'
+import { takeLatest, put, call, all } from 'redux-saga/effects'
 import {
   getMembers,
   createMember,
@@ -21,6 +21,14 @@ import {
   editMemberError,
   editMemberSuccess
 } from './actions'
+import {
+  deleteTeamMemberSuccess,
+  editTeamMemberSuccess
+} from '../teams/actions'
+import {
+  deleteMemberPointsSuccess,
+  editMemberPointsSuccess
+} from '../locations/actions'
 
 function* onGetMembers() {
   try {
@@ -43,7 +51,11 @@ function* onCreateMember({ newMember }) {
 function* onDeleteMember({ id }) {
   try {
     const response = yield call(() => deleteMember(id))
-    yield put(deleteMemberSuccess(response))
+    yield all([
+      put(deleteMemberSuccess(response)),
+      put(deleteMemberPointsSuccess(response)),
+      put(deleteTeamMemberSuccess(response))
+    ])
   } catch (error) {
     yield put(deleteMemberError(error))
   }
@@ -52,7 +64,11 @@ function* onDeleteMember({ id }) {
 function* onEditMember({ id, editedMember }) {
   try {
     const response = yield call(() => editMember(id, editedMember))
-    yield put(editMemberSuccess(response))
+    yield all([
+      put(editMemberSuccess(response)),
+      put(editTeamMemberSuccess(response)),
+      put(editMemberPointsSuccess(response))
+    ])
   } catch (error) {
     yield put(editMemberError(error))
   }

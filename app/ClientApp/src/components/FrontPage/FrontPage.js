@@ -12,7 +12,9 @@ import LocationInfo from 'components/LocationInfo/LocationInfo'
 
 const FrontPage = () => {
   const newLocation = useSelector((state) => selectNewLocation(state))
-  const selectedLocation = useSelector((state) => selectSelectedLocation(state))
+  const selectedLocation = useSelector((state) =>
+    selectSelectedLocation(state)
+  )
   const [activeTab, setActiveTab] = useState('Locations')
 
   const tabs = [
@@ -36,7 +38,7 @@ const FrontPage = () => {
   return (
     <Container>
       <Row>
-        <Col xl={8}>
+        <Col>
           <Leaflet newLocation={newLocation} />
         </Col>
         <p></p>

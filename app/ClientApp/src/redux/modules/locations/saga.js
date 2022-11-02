@@ -1,11 +1,10 @@
-import { takeLatest, put, call } from 'redux-saga/effects'
+import { takeLatest, put, call, all } from 'redux-saga/effects'
 import {
   getLocations,
   createLocation,
   deleteLocation,
   editLocation
 } from 'api/locations'
-import { setPointsSuccess } from '../points/actions'
 import {
   GET_LOCATIONS_ACTION,
   CREATE_LOCATION_ACTION,
@@ -22,6 +21,11 @@ import {
   editLocationSuccess,
   editLocationError
 } from './actions'
+import {
+  createMemberLocationSuccess,
+  deleteMemberLocationSuccess,
+  editMemberLocationSuccess
+} from '../members/actions'
 
 function* onGetLocations() {
   try {
@@ -35,8 +39,10 @@ function* onGetLocations() {
 function* onCreateLocation({ newLocation }) {
   try {
     const response = yield call(() => createLocation(newLocation))
-    yield put(createLocationSuccess(response))
-    yield put(setPointsSuccess(response.points))
+    yield all([
+      put(createLocationSuccess(response)),
+      put(createMemberLocationSuccess(response))
+    ])
   } catch (error) {
     yield put(createLocationError(error))
   }
@@ -45,7 +51,10 @@ function* onCreateLocation({ newLocation }) {
 function* onDeleteLocation({ id }) {
   try {
     const response = yield call(() => deleteLocation(id))
-    yield put(deleteLocationSuccess(response))
+    yield all([
+      put(deleteLocationSuccess(response)),
+      put(deleteMemberLocationSuccess(response))
+    ])
   } catch (error) {
     yield put(deleteLocationError(error))
   }
@@ -53,8 +62,13 @@ function* onDeleteLocation({ id }) {
 
 function* onEditLocation({ id, editedLocation }) {
   try {
-    const response = yield call(() => editLocation(id, editedLocation))
-    yield put(editLocationSuccess(response))
+    const response = yield call(() =>
+      editLocation(id, editedLocation)
+    )
+    yield all([
+      put(editLocationSuccess(response)),
+      put(editMemberLocationSuccess(response))
+    ])
   } catch (error) {
     yield put(editLocationError(error))
   }

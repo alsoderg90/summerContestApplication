@@ -107,7 +107,10 @@ const Leaflet = ({ setActiveTab }) => {
         )
       })}
 
-      <LocationMarker newLocation={newLocation} setActiveTab={setActiveTab} />
+      <LocationMarker
+        newLocation={newLocation}
+        setActiveTab={setActiveTab}
+      />
     </MapContainer>
   )
 }
