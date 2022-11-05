@@ -24,20 +24,19 @@ import {
   editMember
 } from 'redux/modules/members/actions'
 import { getTeams } from 'redux/modules/teams/actions'
-// import { getPoints } from 'redux/modules/points/actions'
 import { getUserPoints } from 'utils/functions'
 import {
   selectMembers,
   selectMembersError
 } from 'redux/modules/members/selectors'
-// import { selectPoints } from 'redux/modules/points/selectors'
 import { selectTeams } from 'redux/modules/teams/selectors'
 import { DeleteButton, EditButton } from 'components/Buttons/buttons'
 import ErrorComponent from 'components/ErrorComponent/ErrorComponent'
-
 import styles from './styles.module.css'
 import { selectLocations } from 'redux/modules/locations/selectors'
 import { getLocations } from 'redux/modules/locations/actions'
+import Notifications from 'components/Notifications/Notifications'
+import { selectNotification } from 'redux/helpers/notifications/selectors'
 
 const defaultMember = { name: '', nationality: 'Finland' }
 
@@ -55,7 +54,9 @@ const Members = () => {
   const dispatch = useDispatch()
   const members = useSelector((state) => selectMembers(state))
   const teams = useSelector((state) => selectTeams(state))
-  //   const points = useSelector((state) => selectPoints(state))
+  //   const notifications = useSelector((state) =>
+  //     selectNotification(state)
+  //   )
   const errors = useSelector((state) => selectMembersError(state))
   const locations = useSelector((state) => selectLocations(state))
   const [activeKey, setActiveKey] = useState('Form')
@@ -73,10 +74,6 @@ const Members = () => {
   useEffect(() => {
     if (!locations) dispatch(getLocations())
   }, [locations])
-
-  //   useEffect(() => {
-  //     if (!points) dispatch(getPoints())
-  //   }, [points])
 
   const handleSubmit = async (
     formData,
@@ -109,6 +106,7 @@ const Members = () => {
 
   return (
     <Container>
+      <Notifications />
       <Row>
         <Col>
           <FormTabs

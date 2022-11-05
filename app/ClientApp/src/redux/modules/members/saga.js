@@ -29,6 +29,7 @@ import {
   deleteMemberPointsSuccess,
   editMemberPointsSuccess
 } from '../locations/actions'
+import { createNotification } from 'redux/helpers/notifications/actions'
 
 function* onGetMembers() {
   try {
@@ -42,7 +43,15 @@ function* onGetMembers() {
 function* onCreateMember({ newMember }) {
   try {
     const response = yield call(() => createMember(newMember))
-    yield put(createMemberSuccess(response))
+    yield all([
+      put(createMemberSuccess(response)),
+      put(
+        createNotification({
+          type: 'created',
+          message: response.name
+        })
+      )
+    ])
   } catch (error) {
     yield put(createMemberError(error))
   }
@@ -54,7 +63,13 @@ function* onDeleteMember({ id }) {
     yield all([
       put(deleteMemberSuccess(response)),
       put(deleteMemberPointsSuccess(response)),
-      put(deleteTeamMemberSuccess(response))
+      put(deleteTeamMemberSuccess(response)),
+      put(
+        createNotification({
+          type: 'deleted',
+          message: response.name
+        })
+      )
     ])
   } catch (error) {
     yield put(deleteMemberError(error))
@@ -67,7 +82,13 @@ function* onEditMember({ id, editedMember }) {
     yield all([
       put(editMemberSuccess(response)),
       put(editTeamMemberSuccess(response)),
-      put(editMemberPointsSuccess(response))
+      put(editMemberPointsSuccess(response)),
+      put(
+        createNotification({
+          type: 'edited',
+          message: response.name
+        })
+      )
     ])
   } catch (error) {
     yield put(editMemberError(error))

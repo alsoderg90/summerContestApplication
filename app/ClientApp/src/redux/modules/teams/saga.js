@@ -1,4 +1,4 @@
-import { takeLatest, put, call } from 'redux-saga/effects'
+import { takeLatest, put, call, all } from 'redux-saga/effects'
 import { getTeams, createTeam, deleteTeam, editTeam } from 'api/teams'
 import {
   GET_TEAMS_ACTION,
@@ -16,6 +16,7 @@ import {
   editTeamError,
   editTeamSuccess
 } from './actions'
+import { createNotification } from 'redux/helpers/notifications/actions'
 
 function* onGetTeams() {
   try {
@@ -29,7 +30,15 @@ function* onGetTeams() {
 function* onCreateTeam({ newTeam }) {
   try {
     const response = yield call(() => createTeam(newTeam))
-    yield put(createTeamSuccess(response))
+    yield all([
+      put(createTeamSuccess(response)),
+      put(
+        createNotification({
+          type: 'created',
+          message: response.name
+        })
+      )
+    ])
   } catch (error) {
     yield put(createTeamError(error))
   }
@@ -38,7 +47,15 @@ function* onCreateTeam({ newTeam }) {
 function* onDeleteTeam({ id }) {
   try {
     const response = yield call(() => deleteTeam(id))
-    yield put(deleteTeamSuccess(response))
+    yield all([
+      put(deleteTeamSuccess(response)),
+      put(
+        createNotification({
+          type: 'deleted',
+          message: response.name
+        })
+      )
+    ])
   } catch (error) {
     yield put(deleteTeamError(error))
   }
@@ -47,7 +64,15 @@ function* onDeleteTeam({ id }) {
 function* onEditTeam({ id, editedTeam }) {
   try {
     const response = yield call(() => editTeam(id, editedTeam))
-    yield put(editTeamSuccess(response))
+    yield all([
+      put(editTeamSuccess(response)),
+      put(
+        createNotification({
+          type: 'edited',
+          message: response.name
+        })
+      )
+    ])
   } catch (error) {
     yield put(editTeamError(error))
   }

@@ -22,6 +22,7 @@ import { getTeams } from 'redux/modules/teams/actions'
 import { getMembers } from 'redux/modules/members/actions'
 import ErrorComponent from 'components/ErrorComponent/ErrorComponent'
 import styles from './styles.module.css'
+import Notifications from 'components/Notifications/Notifications'
 
 const member = yup.object({
   memberId: yup
@@ -108,117 +109,125 @@ const LocationForm = ({ location }) => {
       {!location ? (
         <Alert>Set location from map</Alert>
       ) : (
-        <Formik
-          initialValues={{
-            address: address,
-            title: title ? title : '',
-            points: members ? members : [emptyMember]
-          }}
-          validationSchema={schema}
-          onSubmit={handleSubmit}
-          enableReinitialize
-        >
-          {({ values, errors, isSubmitting, isValid }) => (
-            <Form autoComplete='off'>
-              <Container>
-                <Row>
-                  <Row className={styles.formField}>
-                    <Field
-                      name='address'
-                      component={TextField}
-                      title='Address'
-                      value={address}
-                    />
+        <>
+          <Notifications />
+          <Formik
+            initialValues={{
+              address: address,
+              title: title ? title : '',
+              points: members ? members : [emptyMember]
+            }}
+            validationSchema={schema}
+            onSubmit={handleSubmit}
+            enableReinitialize
+          >
+            {({ values, errors, isSubmitting, isValid }) => (
+              <Form autoComplete='off'>
+                <Container>
+                  <Row>
+                    <Row className={styles.formField}>
+                      <Field
+                        name='address'
+                        component={TextField}
+                        title='Address'
+                        value={address}
+                      />
+                    </Row>
+                    <Row>
+                      <Field
+                        name='title'
+                        type='text'
+                        component={TextField}
+                        label='Name'
+                      />
+                    </Row>
                   </Row>
                   <Row>
-                    <Field
-                      name='title'
-                      type='text'
-                      component={TextField}
-                      label='Name'
-                    />
+                    <p className={styles.membersHeader}>Members</p>
                   </Row>
-                </Row>
-                <Row>
-                  <p className={styles.membersHeader}>Members</p>
-                </Row>
-                <FieldArray name='points'>
-                  {({ push, remove }) => (
-                    <React.Fragment>
-                      {values.points.map((point, index) => (
-                        <Row
-                          key={index}
-                          style={{ marginBottom: '1em' }}
-                        >
-                          <Col xs={5} style={{ paddingLeft: 0 }}>
-                            <FormControl fullWidth>
+                  <FieldArray name='points'>
+                    {({ push, remove }) => (
+                      <React.Fragment>
+                        {values.points.map((point, index) => (
+                          <Row
+                            key={index}
+                            style={{ marginBottom: '1em' }}
+                          >
+                            <Col xs={5} style={{ paddingLeft: 0 }}>
+                              <FormControl fullWidth>
+                                <Field
+                                  name={`points[${index}.memberId`}
+                                  component={Select}
+                                  label='Member'
+                                  type='number'
+                                  data-testing-id={`member-${index}`}
+                                >
+                                  {selectableMembers?.map((sm) => (
+                                    <MenuItem
+                                      key={sm.id}
+                                      value={sm.id}
+                                    >
+                                      {sm.name}{' '}
+                                    </MenuItem>
+                                  ))}
+                                </Field>
+                              </FormControl>
+                            </Col>
+                            <Col xs={5}>
                               <Field
-                                name={`points[${index}.memberId`}
-                                component={Select}
-                                label='Member'
+                                name={`points[${index}].points`}
+                                component={TextField}
+                                label='Points'
                                 type='number'
-                                data-testing-id={`member-${index}`}
+                                data-testing-id={`member-${index}-points`}
+                              />
+                            </Col>
+                            <Col>
+                              <DeleteButton
+                                onClick={() => remove(index)}
                               >
-                                {selectableMembers?.map((sm) => (
-                                  <MenuItem key={sm.id} value={sm.id}>
-                                    {sm.name}{' '}
-                                  </MenuItem>
-                                ))}
-                              </Field>
-                            </FormControl>
-                          </Col>
-                          <Col xs={5}>
-                            <Field
-                              name={`points[${index}].points`}
-                              component={TextField}
-                              label='Points'
-                              type='number'
-                              data-testing-id={`member-${index}-points`}
-                            />
-                          </Col>
+                                Delete
+                              </DeleteButton>
+                            </Col>
+                          </Row>
+                        ))}
+                        <Row>
                           <Col>
-                            <DeleteButton
-                              onClick={() => remove(index)}
-                            >
-                              Delete
-                            </DeleteButton>
+                            {typeof errors.points === 'string' ? (
+                              <p style={{ color: 'red' }}>
+                                {' '}
+                                {errors.points}
+                              </p>
+                            ) : null}
                           </Col>
                         </Row>
-                      ))}
-                      <Row>
-                        <Col>
-                          {typeof errors.points === 'string' ? (
-                            <p style={{ color: 'red' }}>
-                              {' '}
-                              {errors.points}
-                            </p>
-                          ) : null}
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col style={{ paddingLeft: 0 }}>
-                          <Button
-                            type='default'
-                            onClick={() => push(emptyMember)}
-                          >
-                            Add Member
-                          </Button>{' '}
-                          <Button type='submit' variant='success'>
-                            Submit
-                          </Button>{' '}
-                          <DeleteButton
-                            onClick={() => handleDelete(location.id)}
-                          ></DeleteButton>
-                        </Col>
-                      </Row>
-                    </React.Fragment>
-                  )}
-                </FieldArray>
-              </Container>
-              {/* <pre>{JSON.stringify({ values, errors }, null, 4)}</pre> */}
-            </Form>
-          )}
-        </Formik>
+                        <Row>
+                          <Col style={{ paddingLeft: 0 }}>
+                            <Button
+                              type='default'
+                              onClick={() => push(emptyMember)}
+                            >
+                              Add Member
+                            </Button>{' '}
+                            <Button type='submit' variant='success'>
+                              Submit
+                            </Button>{' '}
+                            <DeleteButton
+                              onClick={() =>
+                                handleDelete(location.id)
+                              }
+                            ></DeleteButton>
+                          </Col>
+                        </Row>
+                      </React.Fragment>
+                    )}
+                  </FieldArray>
+                </Container>
+                {/* <pre>{JSON.stringify({ values, errors }, null, 4)}</pre> */}
+              </Form>
+            )}
+          </Formik>
+        </>
       )}
     </>
   )

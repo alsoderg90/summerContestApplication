@@ -28,6 +28,7 @@ import {
   selectTeamsError
 } from 'redux/modules/teams/selectors'
 import { getUserPoints, getTeamPoints } from 'utils/functions'
+import Notifications from 'components/Notifications/Notifications'
 
 const defaultTeam = {
   name: '',
@@ -106,11 +107,6 @@ const Teams = () => {
     return teams?.map((team) => {
       return (
         <div key={team.id} name={team.name}>
-          {/* <th colSpan={2}>{team.name.toUpperCase()} </th>
-        <th colSpan={1}> {getTeamPoints(team.members)}</th>
-        <th colSpan={1}>
-          {' '}
-        </th> */}
           <h5>{`Points: ${getTeamPoints(team.members)}`}</h5>
           <h5>Members:</h5>
           <Table striped bordered hover style={{ marginTop: '1em' }}>
@@ -159,6 +155,7 @@ const Teams = () => {
 
   return (
     <Container>
+      <Notifications />
       <FormTabs
         handleClick={(key) => setActiveKey(key)}
         activeKey={activeKey}

@@ -26,6 +26,7 @@ import {
   deleteMemberLocationSuccess,
   editMemberLocationSuccess
 } from '../members/actions'
+import { createNotification } from 'redux/helpers/notifications/actions'
 
 function* onGetLocations() {
   try {
@@ -41,7 +42,13 @@ function* onCreateLocation({ newLocation }) {
     const response = yield call(() => createLocation(newLocation))
     yield all([
       put(createLocationSuccess(response)),
-      put(createMemberLocationSuccess(response))
+      put(createMemberLocationSuccess(response)),
+      put(
+        createNotification({
+          type: 'created',
+          message: response.title
+        })
+      )
     ])
   } catch (error) {
     yield put(createLocationError(error))
@@ -53,7 +60,13 @@ function* onDeleteLocation({ id }) {
     const response = yield call(() => deleteLocation(id))
     yield all([
       put(deleteLocationSuccess(response)),
-      put(deleteMemberLocationSuccess(response))
+      put(deleteMemberLocationSuccess(response)),
+      put(
+        createNotification({
+          type: 'deleted',
+          message: undefined
+        })
+      )
     ])
   } catch (error) {
     yield put(deleteLocationError(error))
@@ -67,7 +80,13 @@ function* onEditLocation({ id, editedLocation }) {
     )
     yield all([
       put(editLocationSuccess(response)),
-      put(editMemberLocationSuccess(response))
+      put(editMemberLocationSuccess(response)),
+      put(
+        createNotification({
+          type: 'edited',
+          message: response.title
+        })
+      )
     ])
   } catch (error) {
     yield put(editLocationError(error))
