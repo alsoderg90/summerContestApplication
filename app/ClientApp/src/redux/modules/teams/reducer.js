@@ -12,7 +12,10 @@ import {
   EDIT_TEAM_ERROR,
   EDIT_TEAM_SUCCESS,
   EDIT_TEAM_MEMBER_SUCCESS,
-  DELETE_TEAM_MEMBER_SUCCESS
+  DELETE_TEAM_MEMBER_SUCCESS,
+  CREATE_TEAM_MEMBER_POINTS_SUCCESS,
+  EDIT_TEAM_MEMBER_POINTS_SUCCESS,
+  DELETE_TEAM_MEMBER_POINTS_SUCCESS
 } from './constants'
 
 const initialState = {
@@ -52,6 +55,20 @@ const teamReducer = (state = initialState, action) => {
         loadingTeams: false
       }
       break
+    case CREATE_TEAM_MEMBER_POINTS_SUCCESS: {
+      const { points } = action.payload
+      const teams = state.teams.forEach((team) => {
+        const members = team.members.map((member) => {
+          const memberPoints = points.find(
+            (point) => point.memberId === member.id
+          )
+          if (memberPoints) member.points.concat(memberPoints)
+        })
+        return { ...team, members }
+      })
+      state = { ...state, teams }
+      break
+    }
     case EDIT_TEAM_SUCCESS:
       {
         const teams = state.teams?.map((team) => {
@@ -89,6 +106,37 @@ const teamReducer = (state = initialState, action) => {
           )
         }
       else state = { ...state }
+      break
+    }
+    case EDIT_TEAM_MEMBER_POINTS_SUCCESS: {
+      const updatedPoints = action.payload.points
+      const teams = state.teams.map((team) => {
+        const members = team.members.map((member) => {
+          const memberPoints = updatedPoints.find(
+            (updatedPoint) => updatedPoint.memberId === member.id
+          )
+          const points = member.points.map((point) =>
+            point.id === memberPoints.id ? memberPoints : point
+          )
+          return { ...member, points }
+        })
+        return { ...team, members }
+      })
+      state = { ...state, teams }
+      break
+    }
+    case DELETE_TEAM_MEMBER_POINTS_SUCCESS: {
+      const deletedPoint = action.payload
+      const teams = state.teams.map((team) => {
+        const members = team.members.map((member) => {
+          const points = member.points.filter(
+            (point) => point.locationId !== deletedPoint
+          )
+          return { ...member, points }
+        })
+        return { ...team, members }
+      })
+      state = { ...state, teams }
       break
     }
     case DELETE_TEAM_MEMBER_SUCCESS:

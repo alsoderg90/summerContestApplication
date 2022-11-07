@@ -110,7 +110,10 @@ const Members = () => {
       <Row>
         <Col>
           <FormTabs
-            handleClick={(key) => setActiveKey(key)}
+            handleClick={(key) => {
+              setActiveKey(key)
+              setEditableMember(undefined)
+            }}
             activeKey={activeKey}
             tabs={[
               <Table

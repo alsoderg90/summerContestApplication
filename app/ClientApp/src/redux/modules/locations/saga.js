@@ -22,10 +22,16 @@ import {
   editLocationError
 } from './actions'
 import {
-  createMemberLocationSuccess,
-  deleteMemberLocationSuccess,
-  editMemberLocationSuccess
+  createMemberPointsSuccess,
+  deleteMemberPointsSuccess,
+  editMemberPointsSuccess
 } from '../members/actions'
+
+import {
+  editTeamMemberPointsSuccess,
+  deleteTeamMemberPointsSuccess,
+  createTeamMemberPointsSuccess
+} from '../teams/actions'
 import { createNotification } from 'redux/helpers/notifications/actions'
 
 function* onGetLocations() {
@@ -42,7 +48,8 @@ function* onCreateLocation({ newLocation }) {
     const response = yield call(() => createLocation(newLocation))
     yield all([
       put(createLocationSuccess(response)),
-      put(createMemberLocationSuccess(response)),
+      put(createMemberPointsSuccess(response)),
+      put(createTeamMemberPointsSuccess(response)),
       put(
         createNotification({
           type: 'created',
@@ -60,7 +67,8 @@ function* onDeleteLocation({ id }) {
     const response = yield call(() => deleteLocation(id))
     yield all([
       put(deleteLocationSuccess(response)),
-      put(deleteMemberLocationSuccess(response)),
+      put(deleteMemberPointsSuccess(response)),
+      put(deleteTeamMemberPointsSuccess(response)),
       put(
         createNotification({
           type: 'deleted',
@@ -80,7 +88,8 @@ function* onEditLocation({ id, editedLocation }) {
     )
     yield all([
       put(editLocationSuccess(response)),
-      put(editMemberLocationSuccess(response)),
+      put(editMemberPointsSuccess(response)),
+      put(editTeamMemberPointsSuccess(response)),
       put(
         createNotification({
           type: 'edited',

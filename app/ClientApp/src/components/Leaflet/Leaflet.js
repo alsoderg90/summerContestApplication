@@ -101,9 +101,7 @@ const Leaflet = ({ setActiveTab }) => {
                 dispatch(setSelectedLocation(location))
               }
             }}
-          >
-            <Popup>{`${location.address} <br> ${location.name}`}</Popup>
-          </Marker>
+          ></Marker>
         )
       })}
 

@@ -173,7 +173,7 @@ const LocationForm = ({ location }) => {
                                 </Field>
                               </FormControl>
                             </Col>
-                            <Col xs={5}>
+                            <Col xs={4}>
                               <Field
                                 name={`points[${index}].points`}
                                 component={TextField}

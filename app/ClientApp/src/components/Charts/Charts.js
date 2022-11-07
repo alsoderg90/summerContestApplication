@@ -24,15 +24,25 @@ const colors = [
   '#2ca02c',
   '#ffd700',
   '#40e0d0',
-  '#bada55'
+  '#bada55',
+  '#00ff00',
+  '#ff6666',
+  '#660066',
+  '#990000',
+  '#daa520',
+  '#a0db8e',
+  '#66cccc',
+  '#3399ff',
+  '#ccff00',
+  '#003366'
 ]
 
 export const BarChartComponent = ({ data }) => {
   return (
-    <ResponsiveContainer width='99%' aspect={2}>
+    <ResponsiveContainer width='99%' aspect={1}>
       <BarChart data={data} width='100%' height='100%'>
         <CartesianGrid strokeDasharray='5 5' vertical={false} />
-        <XAxis dataKey='name' />
+        <XAxis dataKey='name' angle={90} />
         <YAxis type='number' dataKey='points' />
         <Tooltip />
         <Bar
@@ -53,8 +63,8 @@ export const BarChartComponent = ({ data }) => {
 
 export const PieChartComponent = ({ data }) => {
   return (
-    <ResponsiveContainer width='99%' aspect={2}>
-      <PieChart width={500} height={250} data={data}>
+    <ResponsiveContainer width='99%' aspect={1}>
+      <PieChart width={500} height={550} data={data}>
         <Tooltip />
         <Legend />
         <Pie

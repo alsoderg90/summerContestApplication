@@ -157,7 +157,10 @@ const Teams = () => {
     <Container>
       <Notifications />
       <FormTabs
-        handleClick={(key) => setActiveKey(key)}
+        handleClick={(key) => {
+          setActiveKey(key)
+          setEditableTeam(undefined)
+        }}
         activeKey={activeKey}
         tabs={[
           <div key='Form' name='Form'>

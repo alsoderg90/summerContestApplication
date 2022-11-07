@@ -84,7 +84,7 @@ const locationReducer = (state = initialState, action) => {
       state = {
         ...state,
         locations: state.locations.filter(
-          (location) => location.id == action.payload
+          (location) => location.id !== action.payload
         ),
         selectedLocation: undefined,
         loadingLocations: false

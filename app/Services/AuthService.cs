@@ -16,7 +16,7 @@ namespace app.Services
         }
         public string? Authenticate(string password, string hahshedPassword, string email)
         {
-            //var hashed = HashPassword(user.Password);
+            //var hashed = HashPassword(password);
             var isVerified = VerifyPassword(password, hahshedPassword);
             if (!isVerified)
             {

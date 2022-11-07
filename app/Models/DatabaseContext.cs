@@ -1,4 +1,4 @@
-﻿using EntityFramework.Exceptions.MySQL;
+﻿
 using Microsoft.EntityFrameworkCore;
 
 namespace app.Models
@@ -7,10 +7,6 @@ namespace app.Models
     {
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
         {
-        }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseExceptionProcessor();
         }
         public DbSet<Location> Locations { get; set; } = null!;
         public DbSet<Member> Members { get; set; } = null!;
@@ -36,6 +32,8 @@ namespace app.Models
                 .HasMany(l => l.Points)
                 .WithOne(p => p.Location)
                 .OnDelete(DeleteBehavior.ClientCascade);
+            modelBuilder.Entity<Team>()
+                .HasKey(t => t.Id);
             modelBuilder.Entity<Team>()
                 .HasMany(t => t.Members)
                 .WithOne(m => m.Team)

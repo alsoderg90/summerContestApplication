@@ -6,9 +6,9 @@ using app.Repositories;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 
 DotNetEnv.Env.Load();
-var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
 var secretKey = Environment.GetEnvironmentVariable("SecretKey");
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -17,10 +17,22 @@ builder.Services.AddControllers().AddJsonOptions(x =>
     x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.AddControllersWithViews();
 builder.Services.AddAutoMapper(typeof(Program));
-builder.Services.AddDbContext<DatabaseContext>(opt =>
+
+if (builder.Environment.IsDevelopment())
     {
-        opt.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-    });
+        var connectionString = builder.Configuration.GetConnectionString("TestDb");
+        builder.Services.AddDbContext<DatabaseContext>(options => 
+            options.UseSqlite(connectionString));
+    }
+
+else
+    {
+        var connectionString = builder.Configuration.GetConnectionString("ProdDb");
+        builder.Services.AddDbContext<DatabaseContext>(opt =>
+        {
+            opt.UseSqlite(connectionString);
+        });
+    }
 
 builder.Services.AddAuthentication(x =>
     {

@@ -11,9 +11,9 @@ import {
   EDIT_MEMBER_ACTION,
   EDIT_MEMBER_ERROR,
   EDIT_MEMBER_SUCCESS,
-  EDIT_MEMBER_LOCATION_SUCCESS,
-  DELETE_MEMBER_LOCATION_SUCCESS,
-  CREATE_MEMBER_LOCATION_SUCCESS
+  EDIT_MEMBER_POINTS_SUCCESS,
+  DELETE_MEMBER_POINTS_SUCCESS,
+  CREATE_MEMBER_POINTS_SUCCESS
 } from './constants'
 
 const initialState = {
@@ -65,7 +65,7 @@ const memberReducer = (state = initialState, action) => {
       }
       break
     }
-    case CREATE_MEMBER_LOCATION_SUCCESS:
+    case CREATE_MEMBER_POINTS_SUCCESS:
       state = {
         ...state,
         members: state.members.map((member) => {
@@ -91,7 +91,7 @@ const memberReducer = (state = initialState, action) => {
         })
       }
       break
-    case EDIT_MEMBER_LOCATION_SUCCESS: {
+    case EDIT_MEMBER_POINTS_SUCCESS: {
       const members = state.members.forEach((member) => {
         return member.points.map((pointA) => {
           return action.payload.points.map((pointB) => {
@@ -117,9 +117,16 @@ const memberReducer = (state = initialState, action) => {
         error: undefined
       }
       break
-    case DELETE_MEMBER_LOCATION_SUCCESS:
-      state = { ...state }
+    case DELETE_MEMBER_POINTS_SUCCESS: {
+      const members = state.members.forEach((member) => {
+        return member.points.filter(
+          (point) => point.Id === action.payload
+        )
+      })
+
+      state = { ...state, members }
       break
+    }
     default:
       state = { ...state }
       break
